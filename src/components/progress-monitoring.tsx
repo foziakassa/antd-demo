@@ -549,13 +549,13 @@ export default function ProgressMonitoring() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="flex items-center justify-end mb-6">
+        {/* <div>
           <Title level={1} className="!mb-2">
             Progress Monitoring & Deadlines
           </Title>
           <Text className="text-muted">Track project progress, monitor deadlines, and analyze team performance</Text>
-        </div>
+        </div> */}
         <div className="flex gap-2">
           <Select value={selectedTimeRange} onChange={setSelectedTimeRange} style={{ width: 120 }}>
             <Option value="week">This Week</Option>

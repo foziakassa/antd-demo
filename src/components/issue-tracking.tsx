@@ -617,13 +617,13 @@ export default function IssueTracking() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="flex items-center justify-end mb-6">
+        {/* <div>
           <Title level={1} className="!mb-2">
             Issue Tracking
           </Title>
           <Text className="text-muted">Track bugs, feature requests, and improvements</Text>
-        </div>
+        </div> */}
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateIssue}>
           Create Issue
         </Button>
