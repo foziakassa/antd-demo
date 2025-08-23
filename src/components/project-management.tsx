@@ -165,67 +165,76 @@ export default function ProjectManagement() {
   }
 
   const renderProjectCard = (project: Project) => (
-    <div key={project.id} className="bg-white rounded-lg p-6 shadow-sm">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
-          <p className="text-gray-600 text-sm line-clamp-2">{project.description}</p>
+    <div
+      key={project.id}
+      className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+    >
+      <div className="flex items-start justify-between mb-5">
+        <div className="flex-1 pr-4">
+          <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight tracking-tight">{project.name}</h3>
+          <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 font-medium">{project.description}</p>
         </div>
-        <span className={`px-2 py-1 text-xs rounded-full font-medium ${getPriorityColor(project.priority)}`}>
-          {project.priority.toUpperCase()}
+        <span
+          className={`px-3 py-1.5 text-xs rounded-full font-semibold uppercase tracking-wide ${getPriorityColor(project.priority)}`}
+        >
+          {project.priority}
         </span>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Progress</span>
-            <span className="text-sm font-semibold text-gray-900">{project.progress}%</span>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Progress</span>
+            <span className="text-sm font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded">{project.progress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 shadow-sm"
               style={{ width: `${project.progress}%` }}
             ></div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className={`px-2 py-1 text-xs rounded-full font-medium ${getStatusColor(project.status)}`}>
-            {project.status.replace("-", " ").toUpperCase()}
+        <div className="flex items-center justify-between py-2">
+          <span
+            className={`px-3 py-1.5 text-xs rounded-full font-semibold uppercase tracking-wide ${getStatusColor(project.status)}`}
+          >
+            {project.status.replace("-", " ")}
           </span>
-          <div className="flex items-center gap-1 text-gray-600">
+          <div className="flex items-center gap-2 text-gray-700 bg-gray-50 px-3 py-1.5 rounded-lg">
             <Users className="w-4 h-4" />
-            <span className="text-sm">{project.teamMembers.length}</span>
+            <span className="text-sm font-semibold">{project.teamMembers.length} Members</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between py-2 text-sm">
+          <div className="flex items-center gap-2 text-gray-700">
             <Calendar className="w-4 h-4" />
-            <span>{formatDate(project.endDate)}</span>
+            <span className="font-medium">Due: {formatDate(project.endDate)}</span>
           </div>
-          <span className="font-semibold">${project.budget.toLocaleString()}</span>
+          <span className="font-bold text-gray-900 bg-green-50 text-green-800 px-3 py-1 rounded-lg">
+            ${project.budget.toLocaleString()}
+          </span>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
           <button
             onClick={() => handleViewProject(project)}
-            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-semibold transition-colors duration-200 hover:bg-blue-50 px-3 py-2 rounded-lg"
           >
             <Eye className="w-4 h-4" />
-            View
+            View Details
           </button>
           <button
             onClick={() => handleEditProject(project)}
-            className="flex items-center gap-1 text-gray-600 hover:text-gray-800 text-sm font-medium"
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm font-semibold transition-colors duration-200 hover:bg-gray-50 px-3 py-2 rounded-lg"
           >
             <Edit className="w-4 h-4" />
             Edit
           </button>
           <button
             onClick={() => handleDeleteProject(project.id)}
-            className="flex items-center gap-1 text-red-600 hover:text-red-800 text-sm font-medium"
+            className="flex items-center gap-2 text-red-600 hover:text-red-800 text-sm font-semibold transition-colors duration-200 hover:bg-red-50 px-3 py-2 rounded-lg"
           >
             <Trash2 className="w-4 h-4" />
             Delete

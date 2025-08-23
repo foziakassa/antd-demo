@@ -296,14 +296,18 @@ export default function TaskAssignment() {
       dataIndex: "title",
       key: "title",
       render: (text: string, record: Task) => (
-        <div>
-          <div className="font-semibold mb-1">{text}</div>
-          <div className="text-sm text-muted">{record.project}</div>
+        <div className="py-2">
+          <div className="text-base font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors cursor-pointer leading-tight">
+            {text}
+          </div>
+          <div className="text-sm font-medium text-gray-600 mb-3 bg-gray-50 px-2 py-1 rounded-md inline-block">
+            📁 {record.project}
+          </div>
           <div className="flex gap-1 mt-2">
             {record.tags.map((tag) => (
               <Tag
                 key={tag}
-                //    size="small"
+                className="text-xs font-medium border-0 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
               >
                 {tag}
               </Tag>
@@ -317,7 +321,7 @@ export default function TaskAssignment() {
       dataIndex: "status",
       key: "status",
       render: (status: string) => (
-        <Tag icon={getStatusIcon(status)} color={getStatusColor(status)}>
+        <Tag icon={getStatusIcon(status)} color={getStatusColor(status)} className="font-semibold text-xs px-3 py-1">
           {status.replace("-", " ").toUpperCase()}
         </Tag>
       ),
@@ -327,7 +331,7 @@ export default function TaskAssignment() {
       dataIndex: "priority",
       key: "priority",
       render: (priority: string) => (
-        <Tag icon={<FlagOutlined />} color={getPriorityColor(priority)}>
+        <Tag icon={<FlagOutlined />} color={getPriorityColor(priority)} className="font-bold text-xs px-3 py-1">
           {priority.toUpperCase()}
         </Tag>
       ),
@@ -337,9 +341,9 @@ export default function TaskAssignment() {
       dataIndex: "assignee",
       key: "assignee",
       render: (assignee: string) => (
-        <div className="flex items-center gap-2">
-          <Avatar size="small" icon={<UserOutlined />} />
-          <span className="text-sm">{assignee}</span>
+        <div className="flex items-center gap-3 py-1">
+          <Avatar size="small" icon={<UserOutlined />} className="border-2 border-gray-200" />
+          <span className="text-sm font-semibold text-gray-800 hover:text-blue-600 transition-colors">{assignee}</span>
         </div>
       ),
     },
@@ -348,9 +352,12 @@ export default function TaskAssignment() {
       dataIndex: "dueDate",
       key: "dueDate",
       render: (date: string) => (
-        <div className="flex items-center gap-1 text-sm">
-          <CalendarOutlined />
-          <span>{dayjs(date).format("MMM DD, YYYY")}</span>
+        <div className="flex items-center gap-2 py-1">
+          <CalendarOutlined className="text-gray-500" />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-gray-800">{dayjs(date).format("MMM DD")}</span>
+            <span className="text-xs text-gray-500 font-medium">{dayjs(date).format("YYYY")}</span>
+          </div>
         </div>
       ),
     },
@@ -363,8 +370,11 @@ export default function TaskAssignment() {
             ? Math.min((record.actualHours / record.estimatedHours) * 100, 100)
             : 0
         return (
-          <div className="w-20">
-            <Progress percent={Math.round(progress)} size="small" />
+          <div className="w-24">
+            <Progress percent={Math.round(progress)} size="small" strokeColor="#3b82f6" />
+            <div className="text-xs text-gray-600 mt-1 font-medium">
+              {record.actualHours || 0}h / {record.estimatedHours}h
+            </div>
           </div>
         )
       },
@@ -405,7 +415,7 @@ export default function TaskAssignment() {
       <Row gutter={16}>
         {statusColumns.map((column) => (
           <Col span={6} key={column.key}>
-            <div className="bg-white rounded-lg p-6 h-full">
+            <div className="bg-white rounded-lg p-6 shadow-lg h-full">
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-gray-900">{column.title}</span>
                 <Badge
@@ -654,7 +664,7 @@ export default function TaskAssignment() {
 
       {/* Task Content */}
       {viewMode === "list" ? (
-        <div className="bg-white rounded-lg shadow-lg">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <Table
             columns={columns}
             dataSource={filteredTasks}
@@ -663,8 +673,32 @@ export default function TaskAssignment() {
               pageSize: 10,
               showSizeChanger: true,
               showQuickJumper: true,
+              showTotal: (total, range) => (
+                <span className="text-sm font-medium text-gray-600">
+                  Showing {range[0]}-{range[1]} of {total} tasks
+                </span>
+              ),
             }}
+            className="task-table"
+            rowClassName="hover:bg-gray-50 transition-colors"
           />
+          <style jsx global>{`
+            .task-table .ant-table-thead > tr > th {
+              background-color: #f8fafc;
+              border-bottom: 2px solid #e2e8f0;
+              font-weight: 600;
+              font-size: 14px;
+              color: #374151;
+              padding: 16px 12px;
+            }
+            .task-table .ant-table-tbody > tr > td {
+              padding: 16px 12px;
+              border-bottom: 1px solid #f1f5f9;
+            }
+            .task-table .ant-table-tbody > tr:hover > td {
+              background-color: #f8fafc;
+            }
+          `}</style>
         </div>
       ) : (
         renderKanbanBoard()

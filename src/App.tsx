@@ -29,50 +29,94 @@ export default function App() {
   const [collapsed, setCollapsed] = useState(false)
   const [selectedKey, setSelectedKey] = useState("1")
 
+  // const menuItems = [
+  //   {
+  //     key: "1",
+  //     icon: Home,
+  //     label: "Dashboard",
+  //     section: "admin",
+  //   },
+  //   {
+  //     key: "2",
+  //     icon: FolderOpen,
+  //     label: "Projects",
+  //     section: "admin",
+  //   },
+  //   {
+  //     key: "3",
+  //     icon: Users,
+  //     label: "Team",
+  //     section: "admin",
+  //   },
+  //   {
+  //     key: "4",
+  //     icon: CheckSquare,
+  //     label: "Tasks",
+  //     section: "blog",
+  //   },
+  //   {
+  //     key: "5",
+  //     icon: BarChart3,
+  //     label: "Progress",
+  //     section: "blog",
+  //   },
+  //   {
+  //     key: "6",
+  //     icon: Calendar,
+  //     label: "Schedule",
+  //     section: "personal",
+  //   },
+  //   {
+  //     key: "7",
+  //     icon: Bug,
+  //     label: "Issues",
+  //     section: "personal",
+  //   },
+  // ]
   const menuItems = [
-    {
-      key: "1",
-      icon: Home,
-      label: "Dashboard",
-      section: "admin",
-    },
-    {
-      key: "2",
-      icon: FolderOpen,
-      label: "Projects",
-      section: "admin",
-    },
-    {
-      key: "3",
-      icon: Users,
-      label: "Team",
-      section: "admin",
-    },
-    {
-      key: "4",
-      icon: CheckSquare,
-      label: "Tasks",
-      section: "blog",
-    },
-    {
-      key: "5",
-      icon: BarChart3,
-      label: "Progress",
-      section: "blog",
-    },
-    {
-      key: "6",
-      icon: Calendar,
-      label: "Schedule",
-      section: "personal",
-    },
-    {
-      key: "7",
-      icon: Bug,
-      label: "Issues",
-      section: "personal",
-    },
-  ]
+  {
+    key: "1",
+    icon: Home,
+    label: "Dashboard",
+    section: "overview", // Updated
+  },
+  {
+    key: "2",
+    icon: FolderOpen,
+    label: "Projects",
+    section: "projects", // Updated
+  },
+  {
+    key: "3",
+    icon: Users,
+    label: "Team",
+    section: "teamManagement", // Updated
+  },
+  {
+    key: "4",
+    icon: CheckSquare,
+    label: "Tasks",
+    section: "projects", // Updated
+  },
+  {
+    key: "5",
+    icon: BarChart3,
+    label: "Progress",
+    section: "projects", // Updated
+  },
+  {
+    key: "6",
+    icon: Calendar,
+    label: "Schedule",
+    section: "teamManagement", // Updated
+  },
+  {
+    key: "7",
+    icon: Bug,
+    label: "Issues",
+    section: "teamManagement", // Updated
+  },
+]
 
   const taskStatusData = [
     { name: "Completed", value: 156, color: "#10B981" },
@@ -306,9 +350,9 @@ export default function App() {
     }
   }
 
-  const adminItems = menuItems.filter((item) => item.section === "admin")
-  const blogItems = menuItems.filter((item) => item.section === "blog")
-  const personalItems = menuItems.filter((item) => item.section === "personal")
+  const adminItems = menuItems.filter((item) => item.section === "overview")
+  const blogItems = menuItems.filter((item) => item.section === "projects")
+  const personalItems = menuItems.filter((item) => item.section === "teamManagement")
 
   return (
     <div className="flex h-screen bg-gray-50 ">
@@ -330,8 +374,8 @@ export default function App() {
          >
           {/* Admin Section */}
           <div className="mb-6">
-            <div className="text-xl font-bold text-gray-400 uppercase tracking-wider mb-3 pt-2">
-              {collapsed ? "" : "ADMIN"}
+            <div className="text-lg font-bold text-gray-400 uppercase tracking-wider mb-3 pt-2">
+              {collapsed ? "" : "overview"}
             </div>
             <div className="space-y-1">
               {adminItems.map((item) => {
@@ -342,8 +386,8 @@ export default function App() {
                     key={item.key}
                     onClick={() => setSelectedKey(item.key)}
                     className={`w-full flex items-center gap-5
-                      px-3 py-2 rounded-lg text-lg text-  text-left transition-colors ${
-                      isActive ? "bg-gray-100 text-gray-900" : "text-black font-semibold hover:bg-gray-50 hover:text-gray-900"
+                      px-3 py-2 rounded-lg   text-left transition-colors ${
+                      isActive ? "bg-gray-100 text-gray-900" : "text-gray-900 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -361,8 +405,8 @@ export default function App() {
 
           {/* Blog Section */}
           <div className="mb-6">
-            <div className="text-xl font-bold text-gray-400 uppercase tracking-wider mb-3">
-              {collapsed ? "" : "BLOG"}
+            <div className="text-lg font-bold text-gray-400 uppercase tracking-wider mb-3">
+              {collapsed ? "" : "projects"}
             </div>
             <div className="space-y-1">
               {blogItems.map((item) => {
@@ -391,8 +435,8 @@ export default function App() {
 
           {/* Personal Section */}
           <div>
-            <div className="text-xl font-bold text-gray-400 uppercase tracking-wider mb-3">
-              {collapsed ? "" : "PERSONAL"}
+            <div className="text-lg font-bold text-gray-400 uppercase tracking-wider mb-3">
+              {collapsed ? "" : "team Management"}
             </div>
             <div className="space-y-1">
               {personalItems.map((item) => {
@@ -402,7 +446,7 @@ export default function App() {
                   <button
                     key={item.key}
                     onClick={() => setSelectedKey(item.key)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-center gap-5 px-3 py-2 rounded-lg text-left transition-colors ${
                       isActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   >

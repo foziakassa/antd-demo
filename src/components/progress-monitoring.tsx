@@ -270,10 +270,17 @@ export default function ProgressMonitoring() {
       dataIndex: "name",
       key: "name",
       render: (text: string, record: any) => (
-        <div>
-          <div className="font-semibold">{text}</div>
-          <div className="text-sm text-muted">
-            {record.tasksCompleted}/{record.totalTasks} tasks • {record.teamSize} members
+        <div className="py-1">
+          <div className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors cursor-pointer mb-1">
+            {text}
+          </div>
+          <div className="text-sm text-gray-600 font-medium">
+            <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold mr-2">
+              {record.tasksCompleted}/{record.totalTasks} tasks
+            </span>
+            <span className="bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
+              {record.teamSize} members
+            </span>
           </div>
         </div>
       ),
@@ -285,7 +292,7 @@ export default function ProgressMonitoring() {
       render: (progress: number) => (
         <div className="w-32">
           <Progress percent={progress} size="small" />
-          <Text className="text-xs text-muted">{progress}% complete</Text>
+          <div className="text-sm font-semibold text-gray-700 mt-1">{progress}% complete</div>
         </div>
       ),
     },
@@ -294,7 +301,7 @@ export default function ProgressMonitoring() {
       dataIndex: "status",
       key: "status",
       render: (status: string) => (
-        <Tag icon={getStatusIcon(status)} color={getStatusColor(status)}>
+        <Tag icon={getStatusIcon(status)} color={getStatusColor(status)} className="font-semibold">
           {status.replace("-", " ").toUpperCase()}
         </Tag>
       ),
@@ -304,10 +311,12 @@ export default function ProgressMonitoring() {
       dataIndex: "deadline",
       key: "deadline",
       render: (date: string) => (
-        <div className="flex items-center gap-1">
-          <CalendarOutlined />
-          <span>{dayjs(date).format("MMM DD, YYYY")}</span>
-          {/* <Text className="text-xs text-muted">({dayjs(date).fromNow()})</Text> */}
+        <div className="flex items-center gap-2">
+          <CalendarOutlined className="text-gray-500" />
+          <div>
+            <div className="font-semibold text-gray-900">{dayjs(date).format("MMM DD, YYYY")}</div>
+            {/* <div className="text-xs text-gray-500 font-medium">{dayjs(date).fromNow()}</div> */}
+          </div>
         </div>
       ),
     },
@@ -319,9 +328,13 @@ export default function ProgressMonitoring() {
       dataIndex: "title",
       key: "title",
       render: (text: string, record: any) => (
-        <div>
-          <div className="font-semibold">{text}</div>
-          <div className="text-sm text-muted">{record.project}</div>
+        <div className="py-1">
+          <div className="font-bold text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer mb-1">
+            {text}
+          </div>
+          <div className="text-sm font-medium text-gray-600 bg-gray-50 px-2 py-1 rounded-md inline-block">
+            📁 {record.project}
+          </div>
         </div>
       ),
     },
@@ -330,9 +343,11 @@ export default function ProgressMonitoring() {
       dataIndex: "assignee",
       key: "assignee",
       render: (assignee: string) => (
-        <div className="flex items-center gap-2">
-          <Avatar size="small" icon={<TeamOutlined />} />
-          <span className="text-sm">{assignee}</span>
+        <div className="flex items-center gap-3 py-1">
+          <Avatar size="small" icon={<TeamOutlined />} className="bg-blue-500" />
+          <span className="font-semibold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer">
+            {assignee}
+          </span>
         </div>
       ),
     },
@@ -343,6 +358,7 @@ export default function ProgressMonitoring() {
       render: (progress: number) => (
         <div className="w-24">
           <Progress percent={progress} size="small" />
+          <div className="text-xs font-semibold text-gray-600 mt-1">{progress}%</div>
         </div>
       ),
     },
@@ -350,14 +366,18 @@ export default function ProgressMonitoring() {
       title: "Priority",
       dataIndex: "priority",
       key: "priority",
-      render: (priority: string) => <Tag color={getPriorityColor(priority)}>{priority.toUpperCase()}</Tag>,
+      render: (priority: string) => (
+        <Tag color={getPriorityColor(priority)} className="font-bold">
+          {priority.toUpperCase()}
+        </Tag>
+      ),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (status: string) => (
-        <Tag icon={getStatusIcon(status)} color={getStatusColor(status)}>
+        <Tag icon={getStatusIcon(status)} color={getStatusColor(status)} className="font-semibold">
           {status.replace("-", " ").toUpperCase()}
         </Tag>
       ),
@@ -368,8 +388,8 @@ export default function ProgressMonitoring() {
       key: "deadline",
       render: (date: string) => (
         <div className="text-sm">
-          {dayjs(date).format("MMM DD")}
-          {/* <div className="text-xs text-muted">{dayjs(date).fromNow()}</div> */}
+          <div className="font-bold text-gray-900">{dayjs(date).format("MMM DD")}</div>
+          {/* <div className="text-xs text-gray-500 font-medium">{dayjs(date).fromNow()}</div> */}
         </div>
       ),
     },
@@ -381,9 +401,11 @@ export default function ProgressMonitoring() {
       dataIndex: "member",
       key: "member",
       render: (member: string) => (
-        <div className="flex items-center gap-2">
-          <Avatar icon={<TeamOutlined />} />
-          <span className="font-semibold">{member}</span>
+        <div className="flex items-center gap-3 py-1">
+          <Avatar icon={<TeamOutlined />} className="bg-gradient-to-r from-blue-500 to-purple-500" />
+          <span className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors cursor-pointer">
+            {member}
+          </span>
         </div>
       ),
     },
@@ -391,19 +413,34 @@ export default function ProgressMonitoring() {
       title: "Completed",
       dataIndex: "tasksCompleted",
       key: "tasksCompleted",
-      render: (count: number) => <Text className="font-semibold text-chart-3">{count}</Text>,
+      render: (count: number) => (
+        <div className="text-center">
+          <div className="text-xl font-bold text-green-600">{count}</div>
+          <div className="text-xs text-gray-500 font-medium">tasks</div>
+        </div>
+      ),
     },
     {
       title: "In Progress",
       dataIndex: "tasksInProgress",
       key: "tasksInProgress",
-      render: (count: number) => <Text className="font-semibold text-secondary">{count}</Text>,
+      render: (count: number) => (
+        <div className="text-center">
+          <div className="text-xl font-bold text-blue-600">{count}</div>
+          <div className="text-xs text-gray-500 font-medium">active</div>
+        </div>
+      ),
     },
     {
       title: "Avg. Completion Time",
       dataIndex: "averageCompletionTime",
       key: "averageCompletionTime",
-      render: (time: number) => <Text>{time} days</Text>,
+      render: (time: number) => (
+        <div className="text-center">
+          <div className="text-lg font-bold text-gray-800">{time}</div>
+          <div className="text-xs text-gray-500 font-medium">days</div>
+        </div>
+      ),
     },
     {
       title: "On-Time Delivery",
@@ -412,7 +449,7 @@ export default function ProgressMonitoring() {
       render: (percentage: number) => (
         <div className="flex items-center gap-2">
           <Progress percent={percentage} size="small" className="w-16" />
-          <Text className="text-sm">{percentage}%</Text>
+          <div className="font-bold text-gray-800">{percentage}%</div>
         </div>
       ),
     },
@@ -421,56 +458,56 @@ export default function ProgressMonitoring() {
   const renderOverviewCards = () => (
     <Row gutter={[16, 16]} className="mb-6">
       <Col xs={24} sm={12} lg={6}>
-        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-          <div className="text-2xl font-bold text-primary mb-2">{progressData.projects.length}</div>
-          <Text className="text-muted">Active Projects</Text>
-          <div className="mt-2">
-            <Text className="text-xs text-chart-3">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+          <div className="text-3xl font-bold text-blue-600 mb-2">{progressData.projects.length}</div>
+          <div className="text-base font-semibold text-gray-700 mb-2">Active Projects</div>
+          <div className="mt-3">
+            <div className="text-sm font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full inline-block">
               {progressData.projects.filter((p) => p.status === "on-track").length} on track
-            </Text>
+            </div>
           </div>
         </div>
       </Col>
       <Col xs={24} sm={12} lg={6}>
-        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-          <div className="text-2xl font-bold text-secondary mb-2">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+          <div className="text-3xl font-bold text-green-600 mb-2">
             {progressData.tasks.filter((t) => t.status !== "overdue").length}
           </div>
-          <Text className="text-muted">Tasks On Track</Text>
-          <div className="mt-2">
-            <Text className="text-xs text-chart-5">
+          <div className="text-base font-semibold text-gray-700 mb-2">Tasks On Track</div>
+          <div className="mt-3">
+            <div className="text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full inline-block">
               {progressData.tasks.filter((t) => t.status === "overdue").length} overdue
-            </Text>
+            </div>
           </div>
         </div>
       </Col>
       <Col xs={24} sm={12} lg={6}>
-        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-          <div className="text-2xl font-bold text-chart-3 mb-2">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+          <div className="text-3xl font-bold text-purple-600 mb-2">
             {Math.round(progressData.projects.reduce((sum, p) => sum + p.progress, 0) / progressData.projects.length)}%
           </div>
-          <Text className="text-muted">Avg. Progress</Text>
-          <div className="mt-2">
+          <div className="text-base font-semibold text-gray-700 mb-2">Avg. Progress</div>
+          <div className="mt-3">
             <Progress
               percent={Math.round(
                 progressData.projects.reduce((sum, p) => sum + p.progress, 0) / progressData.projects.length,
               )}
               size="small"
-              className="w-16"
+              className="w-20"
             />
           </div>
         </div>
       </Col>
       <Col xs={24} sm={12} lg={6}>
-        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-          <div className="text-2xl font-bold text-chart-4 mb-2">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+          <div className="text-3xl font-bold text-orange-600 mb-2">
             {progressData.deadlines.filter((d) => d.status === "upcoming" && d.daysRemaining <= 7).length}
           </div>
-          <Text className="text-muted">Due This Week</Text>
-          <div className="mt-2">
-            <Text className="text-xs text-chart-5">
+          <div className="text-base font-semibold text-gray-700 mb-2">Due This Week</div>
+          <div className="mt-3">
+            <div className="text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full inline-block">
               {progressData.deadlines.filter((d) => d.status === "overdue").length} overdue
-            </Text>
+            </div>
           </div>
         </div>
       </Col>
@@ -485,10 +522,11 @@ export default function ProgressMonitoring() {
     if (criticalDeadlines.length === 0) return null
 
     return (
-      <div className="bg-white rounded-lg p-6  mb-6">
-        <Title level={4} className="!mb-4">
+      <div className="bg-white rounded-lg p-6 shadow-lg mb-6">
+        <div className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <WarningOutlined className="text-orange-500" />
           Deadline Alerts
-        </Title>
+        </div>
         <div className="space-y-3">
           {criticalDeadlines.map((deadline) => (
             <Alert
@@ -497,10 +535,10 @@ export default function ProgressMonitoring() {
               message={
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="font-semibold">{deadline.title}</span>
-                    {deadline.assignee && <span className="text-muted"> - {deadline.assignee}</span>}
+                    <span className="font-bold text-base">{deadline.title}</span>
+                    {deadline.assignee && <span className="text-gray-600 font-medium"> - {deadline.assignee}</span>}
                   </div>
-                  <div className="text-sm">
+                  <div className="text-sm font-semibold">
                     {deadline.status === "overdue"
                       ? `${Math.abs(deadline.daysRemaining)} days overdue`
                       : deadline.status === "due-today"
@@ -519,9 +557,10 @@ export default function ProgressMonitoring() {
 
   const renderProgressTimeline = () => (
     <div className="bg-white rounded-lg p-6 shadow-lg">
-      <Title level={4} className="!mb-4">
+      <div className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <CalendarOutlined className="text-blue-500" />
         Project Timeline
-      </Title>
+      </div>
       <Timeline>
         {progressData.projects
           .sort((a, b) => dayjs(a.deadline).unix() - dayjs(b.deadline).unix())
@@ -529,16 +568,23 @@ export default function ProgressMonitoring() {
             <Timeline.Item key={project.id} color={getStatusColor(project.status)} dot={getStatusIcon(project.status)}>
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-semibold">{project.name}</div>
-                  <div className="text-sm text-muted">
-                    {project.tasksCompleted}/{project.totalTasks} tasks completed
+                  <div className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors cursor-pointer">
+                    {project.name}
+                  </div>
+                  <div className="text-sm text-gray-600 font-medium mt-1">
+                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold">
+                      {project.tasksCompleted}/{project.totalTasks} tasks completed
+                    </span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold">{dayjs(project.deadline).format("MMM DD, YYYY")}</div>
+                  <div className="text-base font-bold text-gray-900">
+                    {dayjs(project.deadline).format("MMM DD, YYYY")}
+                  </div>
+                  {/* <div className="text-sm text-gray-500 font-medium">{dayjs(project.deadline).fromNow()}</div> */}
                 </div>
               </div>
-              <Progress percent={project.progress} size="small" className="mt-2" />
+              <Progress percent={project.progress} size="small" className="mt-3" />
             </Timeline.Item>
           ))}
       </Timeline>
@@ -634,23 +680,33 @@ export default function ProgressMonitoring() {
             <Col span={16}>{renderProgressTimeline()}</Col>
             <Col span={8}>
               <div className="bg-white rounded-lg p-6 shadow-lg">
-                <Title level={4} className="!mb-4">
+                <div className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <ClockCircleOutlined className="text-orange-500" />
                   Upcoming Deadlines
-                </Title>
+                </div>
                 <div className="space-y-3">
                   {progressData.deadlines
                     .filter((d) => d.status === "upcoming")
                     .sort((a, b) => a.daysRemaining - b.daysRemaining)
                     .slice(0, 5)
                     .map((deadline) => (
-                      <div key={deadline.id} className="flex items-center justify-between p-3 bg-card rounded-lg">
+                      <div
+                        key={deadline.id}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
+                      >
                         <div>
-                          <div className="font-semibold text-sm">{deadline.title}</div>
-                          {deadline.assignee && <div className="text-xs text-muted">{deadline.assignee}</div>}
+                          <div className="font-bold text-base text-gray-900 hover:text-blue-600 transition-colors">
+                            {deadline.title}
+                          </div>
+                          {deadline.assignee && (
+                            <div className="text-sm text-gray-600 font-medium mt-1">👤 {deadline.assignee}</div>
+                          )}
                         </div>
                         <div className="text-right">
-                          <div className="text-sm font-semibold">{deadline.daysRemaining} days</div>
-                          <div className="text-xs text-muted">{dayjs(deadline.deadline).format("MMM DD")}</div>
+                          <div className="text-base font-bold text-orange-600">{deadline.daysRemaining} days</div>
+                          <div className="text-sm text-gray-500 font-medium">
+                            {dayjs(deadline.deadline).format("MMM DD")}
+                          </div>
                         </div>
                       </div>
                     ))}
