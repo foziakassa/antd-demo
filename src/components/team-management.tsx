@@ -19,6 +19,7 @@ import {
   Typography,
 } from "antd"
 import { UserOutlined, EditOutlined, DeleteOutlined, PlusOutlined, MailOutlined } from "@ant-design/icons"
+import { Plus } from "lucide-react"
 
 const { Title, Text } = Typography
 const { Option } = Select
@@ -221,13 +222,23 @@ export default function TeamManagement() {
           </Title>
           <Text className="text-muted">Manage your team members, roles, and assignments</Text>
         </div> */}
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddMember}>
+        {/* <Button type="primary" icon={<PlusOutlined />} onClick={handleAddMember}>
           Add Team Member
-        </Button>
+        </Button> */}
+        <div className="flex items-center justify-end mb-6">
+                <button
+                  onClick={handleAddMember}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+          Add Team Member
+                  
+                </button>
+              </div>
       </div>
 
       {/* Team Overview Cards */}
-      <Row gutter={[16, 16]} className="mb-6">
+      {/* <Row gutter={[16, 16]} className="mb-6">
         <Col xs={24} sm={12} lg={6}>
           <Card className="text-center">
             <div className="text-2xl font-bold text-primary mb-2">
@@ -260,7 +271,7 @@ export default function TeamManagement() {
             <Text className="text-muted">Departments</Text>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* Team Members Table */}
       <Card>

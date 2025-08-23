@@ -1,41 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import {
-  Card,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  Progress,
-  Tag,
-  Row,
-  Col,
-  Typography,
-  Avatar,
-  Dropdown,
-  message,
-  Tabs,
-  List,
-  Statistic,
-} from "antd"
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  TeamOutlined,
-  CalendarOutlined,
-  EyeOutlined,
-  MoreOutlined,
-} from "@ant-design/icons"
-import dayjs from "dayjs"
-
-const { Title, Text, Paragraph } = Typography
-const { Option } = Select
-const { TextArea } = Input
-const { TabPane } = Tabs
+import { Plus, Edit, Trash2, Users, Calendar, Eye, MoreHorizontal } from "lucide-react"
+import { Modal } from "antd"
 
 interface Project {
   id: string
@@ -126,469 +93,506 @@ export default function ProjectManagement() {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [form] = Form.useForm()
+  const [activeTab, setActiveTab] = useState("overview")
+  const [formData, setFormData] = useState<Partial<Project>>({})
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false)
 
   const getStatusColor = (status: string) => {
     const colors = {
-      planning: "#1890ff", // blue
-      "in-progress": "#fa8c16", // orange
-      review: "#722ed1", // purple
-      completed: "#52c41a", // green
-      "on-hold": "#f5222d", // red
+      planning: "bg-blue-100 text-blue-800",
+      "in-progress": "bg-orange-100 text-orange-800",
+      review: "bg-purple-100 text-purple-800",
+      completed: "bg-green-100 text-green-800",
+      "on-hold": "bg-red-100 text-red-800",
     }
-    return colors[status as keyof typeof colors] || "default"
+    return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800"
   }
 
   const getPriorityColor = (priority: string) => {
     const colors = {
-      low: "#52c41a", // green
-      medium: "#1890ff", // blue
-      high: "#fa8c16", // orange
-      critical: "#f5222d", // red
+      low: "bg-green-100 text-green-800",
+      medium: "bg-blue-100 text-blue-800",
+      high: "bg-orange-100 text-orange-800",
+      critical: "bg-red-100 text-red-800",
     }
-    return colors[priority as keyof typeof colors] || "default"
+    return colors[priority as keyof typeof colors] || "bg-gray-100 text-gray-800"
   }
 
   const handleCreateProject = () => {
     setEditingProject(null)
-    form.resetFields()
+    setFormData({})
     setIsModalVisible(true)
   }
 
   const handleEditProject = (project: Project) => {
     setEditingProject(project)
-    form.setFieldsValue({
-      ...project,
-      startDate: dayjs(project.startDate),
-      endDate: dayjs(project.endDate),
-    })
+    setFormData(project)
     setIsModalVisible(true)
   }
 
   const handleDeleteProject = (id: string) => {
     setProjects(projects.filter((project) => project.id !== id))
-    message.success("Project deleted successfully")
   }
 
-  const handleModalOk = async () => {
-    try {
-      const values = await form.validateFields()
-      const projectData = {
-        ...values,
-        startDate: values.startDate.format("YYYY-MM-DD"),
-        endDate: values.endDate.format("YYYY-MM-DD"),
-      }
-
-      if (editingProject) {
-        setProjects(
-          projects.map((project) => (project.id === editingProject.id ? { ...project, ...projectData } : project)),
-        )
-        message.success("Project updated successfully")
-      } else {
-        const newProject: Project = {
-          id: Date.now().toString(),
-          ...projectData,
-          progress: 0,
-          tasks: { total: 0, completed: 0, inProgress: 0, pending: 0 },
-          teamMembers: projectData.teamMembers || [],
-        }
-        setProjects([...projects, newProject])
-        message.success("Project created successfully")
-      }
-
-      setIsModalVisible(false)
-      form.resetFields()
-    } catch (error) {
-      console.log("Validation failed:", error)
+  const handleSaveProject = () => {
+    if (editingProject) {
+      setProjects(projects.map((project) => (project.id === editingProject.id ? { ...project, ...formData } : project)))
+    } else {
+      const newProject: Project = {
+        id: Date.now().toString(),
+        ...formData,
+        progress: 0,
+        tasks: { total: 0, completed: 0, inProgress: 0, pending: 0 },
+        teamMembers: formData.teamMembers || [],
+      } as Project
+      setProjects([...projects, newProject])
     }
+    setIsModalVisible(false)
+    setFormData({})
   }
 
   const handleViewProject = (project: Project) => {
     setSelectedProject(project)
+    setIsDetailsModalVisible(true)
   }
 
-  const projectMenuItems = (project: Project) => [
-    {
-      key: "view",
-      icon: <EyeOutlined />,
-      label: "View Details",
-      onClick: () => handleViewProject(project),
-    },
-    {
-      key: "edit",
-      icon: <EditOutlined />,
-      label: "Edit Project",
-      onClick: () => handleEditProject(project),
-    },
-    {
-      key: "delete",
-      icon: <DeleteOutlined />,
-      label: "Delete Project",
-      onClick: () => handleDeleteProject(project.id),
-      danger: true,
-    },
-  ]
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  }
 
   const renderProjectCard = (project: Project) => (
-    <Card
-      key={project.id}
-      className="h-full"
-      actions={[
-        <Button key="view" type="text" icon={<EyeOutlined />} onClick={() => handleViewProject(project)} />,
-        <Button key="edit" type="text" icon={<EditOutlined />} onClick={() => handleEditProject(project)} />,
-        <Dropdown key="more" menu={{ items: projectMenuItems(project) }} trigger={["click"]}>
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>,
-      ]}
-    >
-      <div className="mb-4">
-        <div className="flex items-start justify-between mb-2">
-          <Title level={4} className="!mb-0">
-            {project.name}
-          </Title>
-          <Tag color={getPriorityColor(project.priority)}>{project.priority.toUpperCase()}</Tag>
+    <div key={project.id} className="bg-white rounded-lg p-6 shadow-sm">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1">
+          <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
+          <p className="text-gray-600 text-sm line-clamp-2">{project.description}</p>
         </div>
-        <Paragraph ellipsis={{ rows: 2 }} className="text-muted">
-          {project.description}
-        </Paragraph>
+        <span className={`px-2 py-1 text-xs rounded-full font-medium ${getPriorityColor(project.priority)}`}>
+          {project.priority.toUpperCase()}
+        </span>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div>
-          <div className="flex items-center justify-between mb-1">
-            <Text className="text-sm">Progress</Text>
-            <Text className="text-sm font-semibold">{project.progress}%</Text>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-600">Progress</span>
+            <span className="text-sm font-semibold text-gray-900">{project.progress}%</span>
           </div>
-          <Progress percent={project.progress} size="small" />
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${project.progress}%` }}
+            ></div>
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
-          <Tag color={getStatusColor(project.status)}>{project.status.replace("-", " ").toUpperCase()}</Tag>
-          <div className="flex items-center gap-1">
-            <TeamOutlined className="text-muted" />
-            <Text className="text-sm text-muted">{project.teamMembers.length}</Text>
+          <span className={`px-2 py-1 text-xs rounded-full font-medium ${getStatusColor(project.status)}`}>
+            {project.status.replace("-", " ").toUpperCase()}
+          </span>
+          <div className="flex items-center gap-1 text-gray-600">
+            <Users className="w-4 h-4" />
+            <span className="text-sm">{project.teamMembers.length}</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-sm text-muted">
+        <div className="flex items-center justify-between text-sm text-gray-600">
           <div className="flex items-center gap-1">
-            <CalendarOutlined />
-            <span>{dayjs(project.endDate).format("MMM DD, YYYY")}</span>
+            <Calendar className="w-4 h-4" />
+            <span>{formatDate(project.endDate)}</span>
           </div>
-          <span>${project.budget.toLocaleString()}</span>
+          <span className="font-semibold">${project.budget.toLocaleString()}</span>
+        </div>
+
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <button
+            onClick={() => handleViewProject(project)}
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            <Eye className="w-4 h-4" />
+            View
+          </button>
+          <button
+            onClick={() => handleEditProject(project)}
+            className="flex items-center gap-1 text-gray-600 hover:text-gray-800 text-sm font-medium"
+          >
+            <Edit className="w-4 h-4" />
+            Edit
+          </button>
+          <button
+            onClick={() => handleDeleteProject(project.id)}
+            className="flex items-center gap-1 text-red-600 hover:text-red-800 text-sm font-medium"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </button>
         </div>
       </div>
-    </Card>
+    </div>
   )
 
-  const renderProjectDetails = () => {
-    if (!selectedProject) return null
-
-    return (
-      <Modal
-        title={selectedProject.name}
-        open={!!selectedProject}
-        onCancel={() => setSelectedProject(null)}
-        footer={[
-          <Button key="close" onClick={() => setSelectedProject(null)}>
-            Close
-          </Button>,
-          <Button key="edit" type="primary" onClick={() => handleEditProject(selectedProject)}>
-            Edit Project
-          </Button>,
-        ]}
-        width={800}
-      >
-        <Tabs defaultActiveKey="overview">
-          <TabPane tab="Overview" key="overview">
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <Card size="small">
-                  <Statistic title="Progress" value={selectedProject.progress} suffix="%" />
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card size="small">
-                  <Statistic title="Budget" value={selectedProject.budget} prefix="$" />
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card size="small">
-                  <Statistic title="Team Size" value={selectedProject.teamMembers.length} />
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card size="small">
-                  <Statistic title="Total Tasks" value={selectedProject.tasks.total} />
-                </Card>
-              </Col>
-            </Row>
-
-            <div className="mt-4">
-              <Title level={5}>Description</Title>
-              <Paragraph>{selectedProject.description}</Paragraph>
-            </div>
-
-            <div className="mt-4">
-              <Title level={5}>Project Details</Title>
-              <Row gutter={[16, 8]}>
-                <Col span={12}>
-                  <Text strong>Status: </Text>
-                  <Tag color={getStatusColor(selectedProject.status)}>
-                    {selectedProject.status.replace("-", " ").toUpperCase()}
-                  </Tag>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Priority: </Text>
-                  <Tag color={getPriorityColor(selectedProject.priority)}>{selectedProject.priority.toUpperCase()}</Tag>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Start Date: </Text>
-                  <Text>{dayjs(selectedProject.startDate).format("MMM DD, YYYY")}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>End Date: </Text>
-                  <Text>{dayjs(selectedProject.endDate).format("MMM DD, YYYY")}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Manager: </Text>
-                  <Text>{selectedProject.manager}</Text>
-                </Col>
-                <Col span={12}>
-                  <Text strong>Client: </Text>
-                  <Text>{selectedProject.client || "N/A"}</Text>
-                </Col>
-              </Row>
-            </div>
-          </TabPane>
-
-          <TabPane tab="Tasks" key="tasks">
-            <Row gutter={[16, 16]} className="mb-4">
-              <Col span={6}>
-                <Card size="small" className="text-center">
-                  <div className="text-lg font-bold text-chart-3">{selectedProject.tasks.completed}</div>
-                  <div className="text-sm text-muted">Completed</div>
-                </Card>
-              </Col>
-              <Col span={6}>
-                <Card size="small" className="text-center">
-                  <div className="text-lg font-bold text-secondary">{selectedProject.tasks.inProgress}</div>
-                  <div className="text-sm text-muted">In Progress</div>
-                </Card>
-              </Col>
-              <Col span={6}>
-                <Card size="small" className="text-center">
-                  <div className="text-lg font-bold text-chart-4">{selectedProject.tasks.pending}</div>
-                  <div className="text-sm text-muted">Pending</div>
-                </Card>
-              </Col>
-              <Col span={6}>
-                <Card size="small" className="text-center">
-                  <div className="text-lg font-bold text-primary">{selectedProject.tasks.total}</div>
-                  <div className="text-sm text-muted">Total</div>
-                </Card>
-              </Col>
-            </Row>
-          </TabPane>
-
-          <TabPane tab="Team" key="team">
-            <List
-              dataSource={selectedProject.teamMembers}
-              renderItem={(member) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar icon={<TeamOutlined />} />}
-                    title={member}
-                    description="Team Member"
-                  />
-                </List.Item>
-              )}
-            />
-          </TabPane>
-        </Tabs>
-      </Modal>
-    )
-  }
-
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-50 min-h-full">
       <div className="flex items-center justify-end mb-6">
-        {/* <div>
-          <Title level={1} className="!mb-2">
-            Project Management
-          </Title>
-          <Text className="text-muted">Manage your projects, track progress, and coordinate teams</Text>
-        </div> */}
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateProject}>
+        <button
+          onClick={handleCreateProject}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
           Create Project
-        </Button>
+        </button>
       </div>
 
       {/* Project Overview Stats */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-primary mb-2">{projects.length}</div>
-            <Text className="text-muted">Total Projects</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-secondary mb-2">
-              {projects.filter((p) => p.status === "in-progress").length}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-blue-600">{projects.length}</div>
+              <div className="text-gray-400 text-lg font-bold">Total Projects</div>
             </div>
-            <Text className="text-muted">In Progress</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-chart-3 mb-2">
-              {projects.filter((p) => p.status === "completed").length}
+            <button className="p-1">
+              <MoreHorizontal className="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-orange-600">
+                {projects.filter((p) => p.status === "in-progress").length}
+              </div>
+              <div className="text-gray-400 font-bold text-lg">In Progress</div>
             </div>
-            <Text className="text-muted">Completed</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-chart-4 mb-2">
-              ${projects.reduce((sum, p) => sum + p.budget, 0).toLocaleString()}
+            <button className="p-1">
+              <MoreHorizontal className="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-green-600">
+                {projects.filter((p) => p.status === "completed").length}
+              </div>
+              <div className="text-gray-400 text-lg font-bold">Completed</div>
             </div>
-            <Text className="text-muted">Total Budget</Text>
-          </Card>
-        </Col>
-      </Row>
+            <button className="p-1">
+              <MoreHorizontal className="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-purple-600">
+                ${projects.reduce((sum, p) => sum + p.budget, 0).toLocaleString()}
+              </div>
+              <div className="text-gray-400 font-bold text-lg">Total Budget</div>
+            </div>
+            <button className="p-1">
+              <MoreHorizontal className="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+      </div>
 
       {/* Projects Grid */}
-      <Row gutter={[16, 16]}>
-        {projects.map((project) => (
-          <Col xs={24} sm={12} lg={8} key={project.id}>
-            {renderProjectCard(project)}
-          </Col>
-        ))}
-      </Row>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => renderProjectCard(project))}
+      </div>
 
       {/* Create/Edit Project Modal */}
       <Modal
         title={editingProject ? "Edit Project" : "Create New Project"}
         open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={() => {
-          setIsModalVisible(false)
-          form.resetFields()
-        }}
-        width={700}
+        onCancel={() => setIsModalVisible(false)}
+        onOk={handleSaveProject}
+        okText={editingProject ? "Update Project" : "Create Project"}
+        cancelText="Cancel"
+        width={800}
+        className="project-modal"
       >
-        <Form form={form} layout="vertical" className="mt-4">
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="name"
-                label="Project Name"
-                rules={[{ required: true, message: "Please enter project name" }]}
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
+              <input
+                type="text"
+                value={formData.name || ""}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter project name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project Manager *</label>
+              <select
+                value={formData.manager || ""}
+                onChange={(e) => setFormData({ ...formData, manager: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <Input placeholder="Enter project name" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="manager"
-                label="Project Manager"
-                rules={[{ required: true, message: "Please select project manager" }]}
-              >
-                <Select placeholder="Select project manager">
-                  <Option value="Sarah Chen">Sarah Chen</Option>
-                  <Option value="Mike Johnson">Mike Johnson</Option>
-                  <Option value="Emma Davis">Emma Davis</Option>
-                  <Option value="Alex Rodriguez">Alex Rodriguez</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+                <option value="">Select project manager</option>
+                <option value="Sarah Chen">Sarah Chen</option>
+                <option value="Mike Johnson">Mike Johnson</option>
+                <option value="Emma Davis">Emma Davis</option>
+                <option value="Alex Rodriguez">Alex Rodriguez</option>
+              </select>
+            </div>
+          </div>
 
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: "Please enter project description" }]}
-          >
-            <TextArea rows={3} placeholder="Enter project description" />
-          </Form.Item>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+            <textarea
+              value={formData.description || ""}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter project description"
+            />
+          </div>
 
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item name="status" label="Status" rules={[{ required: true, message: "Please select status" }]}>
-                <Select placeholder="Select status">
-                  <Option value="planning">Planning</Option>
-                  <Option value="in-progress">In Progress</Option>
-                  <Option value="review">Review</Option>
-                  <Option value="completed">Completed</Option>
-                  <Option value="on-hold">On Hold</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name="priority"
-                label="Priority"
-                rules={[{ required: true, message: "Please select priority" }]}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+              <select
+                value={formData.status || ""}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as Project["status"] })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <Select placeholder="Select priority">
-                  <Option value="low">Low</Option>
-                  <Option value="medium">Medium</Option>
-                  <Option value="high">High</Option>
-                  <Option value="critical">Critical</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name="budget" label="Budget ($)" rules={[{ required: true, message: "Please enter budget" }]}>
-                <Input type="number" placeholder="Enter budget" />
-              </Form.Item>
-            </Col>
-          </Row>
+                <option value="">Select status</option>
+                <option value="planning">Planning</option>
+                <option value="in-progress">In Progress</option>
+                <option value="review">Review</option>
+                <option value="completed">Completed</option>
+                <option value="on-hold">On Hold</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Priority *</label>
+              <select
+                value={formData.priority || ""}
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value as Project["priority"] })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select priority</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Budget ($) *</label>
+              <input
+                type="number"
+                value={formData.budget || ""}
+                onChange={(e) => setFormData({ ...formData, budget: Number(e.target.value) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter budget"
+              />
+            </div>
+          </div>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="startDate"
-                label="Start Date"
-                rules={[{ required: true, message: "Please select start date" }]}
-              >
-                <DatePicker className="w-full" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="endDate"
-                label="End Date"
-                rules={[{ required: true, message: "Please select end date" }]}
-              >
-                <DatePicker className="w-full" />
-              </Form.Item>
-            </Col>
-          </Row>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
+              <input
+                type="date"
+                value={formData.startDate || ""}
+                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">End Date *</label>
+              <input
+                type="date"
+                value={formData.endDate || ""}
+                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="client" label="Client">
-                <Input placeholder="Enter client name (optional)" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="teamMembers" label="Team Members">
-                <Select mode="multiple" placeholder="Select team members">
-                  <Option value="Sarah Chen">Sarah Chen</Option>
-                  <Option value="Mike Johnson">Mike Johnson</Option>
-                  <Option value="Emma Davis">Emma Davis</Option>
-                  <Option value="Alex Rodriguez">Alex Rodriguez</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+            <input
+              type="text"
+              value={formData.client || ""}
+              onChange={(e) => setFormData({ ...formData, client: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter client name (optional)"
+            />
+          </div>
+        </div>
       </Modal>
 
-      {renderProjectDetails()}
+      {/* Project Details Modal */}
+      <Modal
+        title={selectedProject?.name}
+        open={isDetailsModalVisible}
+        onCancel={() => setIsDetailsModalVisible(false)}
+        footer={[
+          <button
+            key="close"
+            onClick={() => setIsDetailsModalVisible(false)}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium mr-3"
+          >
+            Close
+          </button>,
+          <button
+            key="edit"
+            onClick={() => {
+              if (selectedProject) {
+                handleEditProject(selectedProject)
+                setIsDetailsModalVisible(false)
+              }
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+          >
+            Edit Project
+          </button>,
+        ]}
+        width={1000}
+        className="project-details-modal"
+      >
+        {selectedProject && (
+          <>
+            {/* Tabs */}
+            <div className="border-b border-gray-200 mb-6">
+              <nav className="flex space-x-8">
+                {["overview", "tasks", "team"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm capitalize ${
+                      activeTab === tab
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === "overview" && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-600">{selectedProject.progress}%</div>
+                    <div className="text-sm text-gray-600">Progress</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-green-600">${selectedProject.budget.toLocaleString()}</div>
+                    <div className="text-sm text-gray-600">Budget</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-600">{selectedProject.teamMembers.length}</div>
+                    <div className="text-sm text-gray-600">Team Size</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-600">{selectedProject.tasks.total}</div>
+                    <div className="text-sm text-gray-600">Total Tasks</div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+                  <p className="text-gray-600">{selectedProject.description}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Project Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700">Status:</span>
+                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(selectedProject.status)}`}>
+                        {selectedProject.status.replace("-", " ").toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700">Priority:</span>
+                      <span className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(selectedProject.priority)}`}>
+                        {selectedProject.priority.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700">Start Date:</span>
+                      <span className="text-gray-600">{formatDate(selectedProject.startDate)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700">End Date:</span>
+                      <span className="text-gray-600">{formatDate(selectedProject.endDate)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700">Manager:</span>
+                      <span className="text-gray-600">{selectedProject.manager}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700">Client:</span>
+                      <span className="text-gray-600">{selectedProject.client || "N/A"}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "tasks" && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-green-600">{selectedProject.tasks.completed}</div>
+                    <div className="text-sm text-gray-600">Completed</div>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-600">{selectedProject.tasks.inProgress}</div>
+                    <div className="text-sm text-gray-600">In Progress</div>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-600">{selectedProject.tasks.pending}</div>
+                    <div className="text-sm text-gray-600">Pending</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-600">{selectedProject.tasks.total}</div>
+                    <div className="text-sm text-gray-600">Total</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "team" && (
+              <div className="space-y-4">
+                {selectedProject.teamMembers.map((member, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <Users className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">{member}</div>
+                      <div className="text-sm text-gray-600">Team Member</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </Modal>
     </div>
   )
 }

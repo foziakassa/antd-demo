@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import {
-  Card,
   Row,
   Col,
   Typography,
@@ -422,7 +421,7 @@ export default function ProgressMonitoring() {
   const renderOverviewCards = () => (
     <Row gutter={[16, 16]} className="mb-6">
       <Col xs={24} sm={12} lg={6}>
-        <Card className="text-center">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
           <div className="text-2xl font-bold text-primary mb-2">{progressData.projects.length}</div>
           <Text className="text-muted">Active Projects</Text>
           <div className="mt-2">
@@ -430,10 +429,10 @@ export default function ProgressMonitoring() {
               {progressData.projects.filter((p) => p.status === "on-track").length} on track
             </Text>
           </div>
-        </Card>
+        </div>
       </Col>
       <Col xs={24} sm={12} lg={6}>
-        <Card className="text-center">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
           <div className="text-2xl font-bold text-secondary mb-2">
             {progressData.tasks.filter((t) => t.status !== "overdue").length}
           </div>
@@ -443,10 +442,10 @@ export default function ProgressMonitoring() {
               {progressData.tasks.filter((t) => t.status === "overdue").length} overdue
             </Text>
           </div>
-        </Card>
+        </div>
       </Col>
       <Col xs={24} sm={12} lg={6}>
-        <Card className="text-center">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
           <div className="text-2xl font-bold text-chart-3 mb-2">
             {Math.round(progressData.projects.reduce((sum, p) => sum + p.progress, 0) / progressData.projects.length)}%
           </div>
@@ -460,10 +459,10 @@ export default function ProgressMonitoring() {
               className="w-16"
             />
           </div>
-        </Card>
+        </div>
       </Col>
       <Col xs={24} sm={12} lg={6}>
-        <Card className="text-center">
+        <div className="bg-white rounded-lg p-6 shadow-lg text-center">
           <div className="text-2xl font-bold text-chart-4 mb-2">
             {progressData.deadlines.filter((d) => d.status === "upcoming" && d.daysRemaining <= 7).length}
           </div>
@@ -473,7 +472,7 @@ export default function ProgressMonitoring() {
               {progressData.deadlines.filter((d) => d.status === "overdue").length} overdue
             </Text>
           </div>
-        </Card>
+        </div>
       </Col>
     </Row>
   )
@@ -486,7 +485,7 @@ export default function ProgressMonitoring() {
     if (criticalDeadlines.length === 0) return null
 
     return (
-      <Card className="mb-6">
+      <div className="bg-white rounded-lg p-6  mb-6">
         <Title level={4} className="!mb-4">
           Deadline Alerts
         </Title>
@@ -514,12 +513,12 @@ export default function ProgressMonitoring() {
             />
           ))}
         </div>
-      </Card>
+      </div>
     )
   }
 
   const renderProgressTimeline = () => (
-    <Card>
+    <div className="bg-white rounded-lg p-6 shadow-lg">
       <Title level={4} className="!mb-4">
         Project Timeline
       </Title>
@@ -537,25 +536,18 @@ export default function ProgressMonitoring() {
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-semibold">{dayjs(project.deadline).format("MMM DD, YYYY")}</div>
-                  {/* <div className="text-xs text-muted">{dayjs(project.deadline).fromNow()}</div> */}
                 </div>
               </div>
               <Progress percent={project.progress} size="small" className="mt-2" />
             </Timeline.Item>
           ))}
       </Timeline>
-    </Card>
+    </div>
   )
 
   return (
     <div className="p-6">
       <div className="flex items-center justify-end mb-6">
-        {/* <div>
-          <Title level={1} className="!mb-2">
-            Progress Monitoring & Deadlines
-          </Title>
-          <Text className="text-muted">Track project progress, monitor deadlines, and analyze team performance</Text>
-        </div> */}
         <div className="flex gap-2">
           <Select value={selectedTimeRange} onChange={setSelectedTimeRange} style={{ width: 120 }}>
             <Option value="week">This Week</Option>
@@ -578,7 +570,7 @@ export default function ProgressMonitoring() {
 
       <Tabs defaultActiveKey="projects">
         <TabPane tab="Project Progress" key="projects">
-          <Card>
+          <div className="bg-white rounded-lg p-6 shadow-lg">
             <Table
               columns={projectColumns}
               dataSource={progressData.projects}
@@ -586,29 +578,29 @@ export default function ProgressMonitoring() {
               pagination={false}
               className="mb-6"
             />
-          </Card>
+          </div>
         </TabPane>
 
         <TabPane tab="Task Progress" key="tasks">
-          <Card>
+          <div className="bg-white rounded-lg p-6 shadow-lg">
             <Table columns={taskColumns} dataSource={progressData.tasks} rowKey="id" pagination={{ pageSize: 10 }} />
-          </Card>
+          </div>
         </TabPane>
 
         <TabPane tab="Team Performance" key="performance">
           <Row gutter={[16, 16]}>
             <Col span={16}>
-              <Card>
+              <div className="bg-white rounded-lg p-6 shadow-lg">
                 <Table
                   columns={teamPerformanceColumns}
                   dataSource={progressData.teamPerformance}
                   rowKey="member"
                   pagination={false}
                 />
-              </Card>
+              </div>
             </Col>
             <Col span={8}>
-              <Card className="mb-4">
+              <div className="bg-white rounded-lg p-6 shadow-lg mb-4">
                 <Statistic
                   title="Team Productivity"
                   value={Math.round(
@@ -618,8 +610,8 @@ export default function ProgressMonitoring() {
                   suffix="%"
                   prefix={<TrophyOutlined />}
                 />
-              </Card>
-              <Card>
+              </div>
+              <div className="bg-white rounded-lg p-6 shadow-lg">
                 <Statistic
                   title="Average Completion Time"
                   value={
@@ -632,7 +624,7 @@ export default function ProgressMonitoring() {
                   suffix="days"
                   prefix={<ClockCircleOutlined />}
                 />
-              </Card>
+              </div>
             </Col>
           </Row>
         </TabPane>
@@ -641,7 +633,7 @@ export default function ProgressMonitoring() {
           <Row gutter={16}>
             <Col span={16}>{renderProgressTimeline()}</Col>
             <Col span={8}>
-              <Card>
+              <div className="bg-white rounded-lg p-6 shadow-lg">
                 <Title level={4} className="!mb-4">
                   Upcoming Deadlines
                 </Title>
@@ -663,7 +655,7 @@ export default function ProgressMonitoring() {
                       </div>
                     ))}
                 </div>
-              </Card>
+              </div>
             </Col>
           </Row>
         </TabPane>

@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import {
-  Card,
   Table,
   Button,
   Modal,
@@ -302,9 +301,10 @@ export default function TaskAssignment() {
           <div className="text-sm text-muted">{record.project}</div>
           <div className="flex gap-1 mt-2">
             {record.tags.map((tag) => (
-              <Tag key={tag}
-            //    size="small"
-            >
+              <Tag
+                key={tag}
+                //    size="small"
+              >
                 {tag}
               </Tag>
             ))}
@@ -405,48 +405,39 @@ export default function TaskAssignment() {
       <Row gutter={16}>
         {statusColumns.map((column) => (
           <Col span={6} key={column.key}>
-            <Card
-              title={
-                <div className="flex items-center justify-between">
-                  <span>{column.title}</span>
-                  <Badge
-                    count={filteredTasks.filter((task) => task.status === column.key).length}
-                    style={{ backgroundColor: `var(--color-${column.color})` }}
-                  />
-                </div>
-              }
-              className="h-full"
-            >
+            <div className="bg-white rounded-lg p-6 h-full">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-gray-900">{column.title}</span>
+                <Badge
+                  count={filteredTasks.filter((task) => task.status === column.key).length}
+                  style={{ backgroundColor: `var(--color-${column.color})` }}
+                />
+              </div>
               <div className="space-y-3">
                 {filteredTasks
                   .filter((task) => task.status === column.key)
                   .map((task) => (
-                    <Card
+                    <div
                       key={task.id}
-                      size="small"
-                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      className="bg-gray-50 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow border border-gray-100"
                       onClick={() => handleViewTask(task)}
                     >
                       <div className="mb-2">
                         <div className="font-semibold text-sm mb-1">{task.title}</div>
-                        <div className="text-xs text-muted">{task.project}</div>
+                        <div className="text-xs text-gray-600">{task.project}</div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <Tag
-                        //  size="small"
-                          color={getPriorityColor(task.priority)}>
-                          {task.priority}
-                        </Tag>
+                        <Tag color={getPriorityColor(task.priority)}>{task.priority}</Tag>
                         <Avatar size="small" icon={<UserOutlined />} />
                       </div>
-                      <div className="mt-2 text-xs text-muted flex items-center gap-1">
+                      <div className="mt-2 text-xs text-gray-600 flex items-center gap-1">
                         <CalendarOutlined />
                         {dayjs(task.dueDate).format("MMM DD")}
                       </div>
-                    </Card>
+                    </div>
                   ))}
               </div>
-            </Card>
+            </div>
           </Col>
         ))}
       </Row>
@@ -555,100 +546,115 @@ export default function TaskAssignment() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-50 min-h-full">
       <div className="flex items-center justify-end mb-6">
-        {/* <div>
-          <Title level={1} className="!mb-2">
-            Task Assignment & Tracking
-          </Title>
-          <Text className="text-muted">Assign tasks to team members and track progress</Text>
-        </div> */}
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateTask}>
+        <button
+          onClick={handleCreateTask}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <PlusOutlined />
           Create Task
-        </Button>
+        </button>
       </div>
 
-      {/* Task Overview Stats */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-primary mb-2">{tasks.length}</div>
-            <Text className="text-muted">Total Tasks</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-secondary mb-2">
-              {tasks.filter((t) => t.status === "in-progress").length}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-blue-600">{tasks.length}</div>
+              <div className="text-gray-400 text-lg font-bold">Total Tasks</div>
             </div>
-            <Text className="text-muted">In Progress</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-chart-3 mb-2">
-              {tasks.filter((t) => t.status === "completed").length}
-            </div>
-            <Text className="text-muted">Completed</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-chart-5 mb-2">
-              {tasks.filter((t) => dayjs(t.dueDate).isBefore(dayjs()) && t.status !== "completed").length}
-            </div>
-            <Text className="text-muted">Overdue</Text>
-          </Card>
-        </Col>
-      </Row>
+            <button className="p-1">
+              <MoreOutlined className="text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
 
-      {/* Filters and View Toggle */}
-      <Card className="mb-6">
-        <Row gutter={16} align="middle">
-          <Col>
-            <Text strong>Filters:</Text>
-          </Col>
-          <Col>
-            <Select placeholder="All Statuses" value={filterStatus} onChange={setFilterStatus} style={{ width: 150 }}>
-              <Option value="all">All Statuses</Option>
-              <Option value="todo">To Do</Option>
-              <Option value="in-progress">In Progress</Option>
-              <Option value="review">Review</Option>
-              <Option value="completed">Completed</Option>
-            </Select>
-          </Col>
-          <Col>
-            <Select
-              placeholder="All Assignees"
-              value={filterAssignee}
-              onChange={setFilterAssignee}
-              style={{ width: 150 }}
-            >
-              <Option value="all">All Assignees</Option>
-              {teamMembers.map((member) => (
-                <Option key={member} value={member}>
-                  {member}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-          <Col flex="auto" />
-          <Col>
-            <Button.Group>
-              <Button type={viewMode === "list" ? "primary" : "default"} onClick={() => setViewMode("list")}>
-                List View
-              </Button>
-              <Button type={viewMode === "kanban" ? "primary" : "default"} onClick={() => setViewMode("kanban")}>
-                Kanban Board
-              </Button>
-            </Button.Group>
-          </Col>
-        </Row>
-      </Card>
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-orange-600">
+                {tasks.filter((t) => t.status === "in-progress").length}
+              </div>
+              <div className="text-gray-400 font-bold text-lg">In Progress</div>
+            </div>
+            <button className="p-1">
+              <MoreOutlined className="text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-green-600">
+                {tasks.filter((t) => t.status === "completed").length}
+              </div>
+              <div className="text-gray-400 text-lg font-bold">Completed</div>
+            </div>
+            <button className="p-1">
+              <MoreOutlined className="text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="text-3xl font-bold text-red-600">
+                {tasks.filter((t) => dayjs(t.dueDate).isBefore(dayjs()) && t.status !== "completed").length}
+              </div>
+              <div className="text-gray-400 font-bold text-lg">Overdue</div>
+            </div>
+            <button className="p-1">
+              <MoreOutlined className="text-gray-400" />
+            </button>
+          </div>
+          <button className="text-blue-500 text-sm font-medium hover:text-blue-600">View</button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg p-6  mb-6">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-sm font-medium text-gray-700">Filters:</span>
+          <Select placeholder="All Statuses" value={filterStatus} onChange={setFilterStatus} style={{ width: 150 }}>
+            <Option value="all">All Statuses</Option>
+            <Option value="todo">To Do</Option>
+            <Option value="in-progress">In Progress</Option>
+            <Option value="review">Review</Option>
+            <Option value="completed">Completed</Option>
+          </Select>
+          <Select
+            placeholder="All Assignees"
+            value={filterAssignee}
+            onChange={setFilterAssignee}
+            style={{ width: 150 }}
+          >
+            <Option value="all">All Assignees</Option>
+            {teamMembers.map((member) => (
+              <Option key={member} value={member}>
+                {member}
+              </Option>
+            ))}
+          </Select>
+          <div className="flex-1" />
+          <Button.Group>
+            <Button type={viewMode === "list" ? "primary" : "default"} onClick={() => setViewMode("list")}>
+              List View
+            </Button>
+            <Button type={viewMode === "kanban" ? "primary" : "default"} onClick={() => setViewMode("kanban")}>
+              Kanban Board
+            </Button>
+          </Button.Group>
+        </div>
+      </div>
 
       {/* Task Content */}
       {viewMode === "list" ? (
-        <Card>
+        <div className="bg-white rounded-lg shadow-lg">
           <Table
             columns={columns}
             dataSource={filteredTasks}
@@ -659,7 +665,7 @@ export default function TaskAssignment() {
               showQuickJumper: true,
             }}
           />
-        </Card>
+        </div>
       ) : (
         renderKanbanBoard()
       )}

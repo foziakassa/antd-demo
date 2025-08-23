@@ -324,7 +324,10 @@ export default function App() {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 bg-amber-50 h-full px-6 z-20">
+        <nav className="p-4
+         bg-amber-50 
+         h-full px-6 z-20"
+         >
           {/* Admin Section */}
           <div className="mb-6">
             <div className="text-xl font-bold text-gray-400 uppercase tracking-wider mb-3 pt-2">
