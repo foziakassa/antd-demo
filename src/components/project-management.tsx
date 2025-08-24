@@ -324,35 +324,63 @@ export default function ProjectManagement() {
 
       {/* Create/Edit Project Modal */}
       <Modal
-        title={editingProject ? "Edit Project" : "Create New Project"}
+        title={
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Plus className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                {editingProject ? "Edit Project" : "Create New Project"}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {editingProject ? "Update project information" : "Fill in the details to create a new project"}
+              </p>
+            </div>
+          </div>
+        }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={handleSaveProject}
         okText={editingProject ? "Update Project" : "Create Project"}
         cancelText="Cancel"
-        width={800}
+        width={900}
         className="project-modal"
+        okButtonProps={{
+          className:
+            "bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700 text-white font-semibold px-6 py-2 h-auto rounded-lg shadow-sm",
+        }}
+        cancelButtonProps={{
+          className:
+            "border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-800 font-semibold px-6 py-2 h-auto rounded-lg",
+        }}
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
+        <div className="space-y-8 pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                Project Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={formData.name || ""}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter project name"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 font-medium"
+                placeholder="Enter a descriptive project name"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Project Manager *</label>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                Project Manager <span className="text-red-500">*</span>
+              </label>
               <select
                 value={formData.manager || ""}
                 onChange={(e) => setFormData({ ...formData, manager: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium bg-white"
               >
-                <option value="">Select project manager</option>
+                <option value="" className="text-gray-400">
+                  Select project manager
+                </option>
                 <option value="Sarah Chen">Sarah Chen</option>
                 <option value="Mike Johnson">Mike Johnson</option>
                 <option value="Emma Davis">Emma Davis</option>
@@ -361,89 +389,126 @@ export default function ProjectManagement() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-gray-800 mb-2">
+              Project Description <span className="text-red-500">*</span>
+            </label>
             <textarea
               value={formData.description || ""}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter project description"
+              rows={4}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 font-medium resize-none"
+              placeholder="Provide a detailed description of the project goals, scope, and deliverables"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                Status <span className="text-red-500">*</span>
+              </label>
               <select
                 value={formData.status || ""}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as Project["status"] })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium bg-white"
               >
-                <option value="">Select status</option>
-                <option value="planning">Planning</option>
-                <option value="in-progress">In Progress</option>
-                <option value="review">Review</option>
-                <option value="completed">Completed</option>
-                <option value="on-hold">On Hold</option>
+                <option value="" className="text-gray-400">
+                  Select status
+                </option>
+                <option value="planning">📋 Planning</option>
+                <option value="in-progress">🚀 In Progress</option>
+                <option value="review">👀 Review</option>
+                <option value="completed">✅ Completed</option>
+                <option value="on-hold">⏸️ On Hold</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Priority *</label>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                Priority <span className="text-red-500">*</span>
+              </label>
               <select
                 value={formData.priority || ""}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value as Project["priority"] })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium bg-white"
               >
-                <option value="">Select priority</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
+                <option value="" className="text-gray-400">
+                  Select priority
+                </option>
+                <option value="low">🟢 Low Priority</option>
+                <option value="medium">🟡 Medium Priority</option>
+                <option value="high">🟠 High Priority</option>
+                <option value="critical">🔴 Critical Priority</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Budget ($) *</label>
-              <input
-                type="number"
-                value={formData.budget || ""}
-                onChange={(e) => setFormData({ ...formData, budget: Number(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter budget"
-              />
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                Budget (USD) <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-bold">$</span>
+                <input
+                  type="number"
+                  value={formData.budget || ""}
+                  onChange={(e) => setFormData({ ...formData, budget: Number(e.target.value) })}
+                  className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 font-medium"
+                  placeholder="50,000"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                Start Date <span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 value={formData.startDate || ""}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date *</label>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
+                End Date <span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 value={formData.endDate || ""}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-gray-800 mb-2">
+              Client Name
+              <span className="text-gray-500 font-normal ml-2">(Optional)</span>
+            </label>
             <input
               type="text"
               value={formData.client || ""}
               onChange={(e) => setFormData({ ...formData, client: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter client name (optional)"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 font-medium"
+              placeholder="Enter client or organization name"
             />
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
+                <span className="text-white text-xs font-bold">i</span>
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-blue-900 mb-1">Form Guidelines</h4>
+                <p className="text-sm text-blue-700">
+                  Fields marked with <span className="text-red-500 font-bold">*</span> are required. Make sure to
+                  provide accurate information for better project tracking and management.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </Modal>

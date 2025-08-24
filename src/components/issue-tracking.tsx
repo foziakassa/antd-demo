@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import {
-  Card,
   Table,
   Button,
   Modal,
@@ -373,11 +372,7 @@ export default function IssueTracking() {
           <div className="text-sm text-muted">{record.project}</div>
           <div className="flex gap-1 mt-2">
             {record.tags.map((tag) => (
-              <Tag key={tag} 
-            //   size="small"
-              >
-                {tag}
-              </Tag>
+              <Tag key={tag}>{tag}</Tag>
             ))}
           </div>
         </div>
@@ -430,12 +425,7 @@ export default function IssueTracking() {
       title: "Created",
       dataIndex: "createdDate",
       key: "createdDate",
-      render: (date: string) => (
-        <div className="text-sm">
-          {dayjs(date).format("MMM DD")}
-          {/* <div className="text-xs text-muted">{dayjs(date).fromNow()}</div> */}
-        </div>
-      ),
+      render: (date: string) => <div className="text-sm">{dayjs(date).format("MMM DD")}</div>,
     },
     {
       title: "Actions",
@@ -616,96 +606,78 @@ export default function IssueTracking() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-end mb-6">
-        {/* <div>
-          <Title level={1} className="!mb-2">
-            Issue Tracking
-          </Title>
-          <Text className="text-muted">Track bugs, feature requests, and improvements</Text>
-        </div> */}
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateIssue}>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Issue Tracking</h1>
+          <p className="text-gray-600">Track bugs, feature requests, and improvements</p>
+        </div>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateIssue} className="h-10 px-6">
           Create Issue
         </Button>
       </div>
 
-      {/* Issue Overview Stats */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-primary mb-2">{issues.length}</div>
-            <Text className="text-muted">Total Issues</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-secondary mb-2">
-              {issues.filter((i) => i.status === "open").length}
-            </div>
-            <Text className="text-muted">Open Issues</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-chart-3 mb-2">
-              {issues.filter((i) => i.status === "resolved").length}
-            </div>
-            <Text className="text-muted">Resolved</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="text-center">
-            <div className="text-2xl font-bold text-chart-5 mb-2">
-              {issues.filter((i) => i.priority === "critical").length}
-            </div>
-            <Text className="text-muted">Critical</Text>
-          </Card>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="text-3xl font-bold text-blue-600 mb-2">{issues.length}</div>
+          <div className="text-gray-600 font-medium">Total Issues</div>
+        </div>
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="text-3xl font-bold text-orange-600 mb-2">
+            {issues.filter((i) => i.status === "open").length}
+          </div>
+          <div className="text-gray-600 font-medium">Open Issues</div>
+        </div>
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="text-3xl font-bold text-green-600 mb-2">
+            {issues.filter((i) => i.status === "resolved").length}
+          </div>
+          <div className="text-gray-600 font-medium">Resolved</div>
+        </div>
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <div className="text-3xl font-bold text-red-600 mb-2">
+            {issues.filter((i) => i.priority === "critical").length}
+          </div>
+          <div className="text-gray-600 font-medium">Critical</div>
+        </div>
+      </div>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <Row gutter={16} align="middle">
-          <Col>
-            <Text strong>Filters:</Text>
-          </Col>
-          <Col>
-            <Select placeholder="All Statuses" value={filterStatus} onChange={setFilterStatus} style={{ width: 150 }}>
-              <Option value="all">All Statuses</Option>
-              <Option value="open">Open</Option>
-              <Option value="in-progress">In Progress</Option>
-              <Option value="resolved">Resolved</Option>
-              <Option value="closed">Closed</Option>
-            </Select>
-          </Col>
-          <Col>
-            <Select placeholder="All Types" value={filterType} onChange={setFilterType} style={{ width: 150 }}>
-              <Option value="all">All Types</Option>
-              <Option value="bug">Bug</Option>
-              <Option value="feature">Feature</Option>
-              <Option value="improvement">Improvement</Option>
-              <Option value="task">Task</Option>
-            </Select>
-          </Col>
-          <Col>
-            <Select
-              placeholder="All Priorities"
-              value={filterPriority}
-              onChange={setFilterPriority}
-              style={{ width: 150 }}
-            >
-              <Option value="all">All Priorities</Option>
-              <Option value="low">Low</Option>
-              <Option value="medium">Medium</Option>
-              <Option value="high">High</Option>
-              <Option value="critical">Critical</Option>
-            </Select>
-          </Col>
-        </Row>
-      </Card>
+      <div className="bg-white rounded-lg p-6 shadow-lg mb-6">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-gray-700 font-semibold">Filters:</span>
+          <Select placeholder="All Statuses" value={filterStatus} onChange={setFilterStatus} className="min-w-[150px]">
+            <Option value="all">All Statuses</Option>
+            <Option value="open">Open</Option>
+            <Option value="in-progress">In Progress</Option>
+            <Option value="resolved">Resolved</Option>
+            <Option value="closed">Closed</Option>
+          </Select>
+          <Select placeholder="All Types" value={filterType} onChange={setFilterType} className="min-w-[150px]">
+            <Option value="all">All Types</Option>
+            <Option value="bug">Bug</Option>
+            <Option value="feature">Feature</Option>
+            <Option value="improvement">Improvement</Option>
+            <Option value="task">Task</Option>
+          </Select>
+          <Select
+            placeholder="All Priorities"
+            value={filterPriority}
+            onChange={setFilterPriority}
+            className="min-w-[150px]"
+          >
+            <Option value="all">All Priorities</Option>
+            <Option value="low">Low</Option>
+            <Option value="medium">Medium</Option>
+            <Option value="high">High</Option>
+            <Option value="critical">Critical</Option>
+          </Select>
+        </div>
+      </div>
 
-      {/* Issues Table */}
-      <Card>
+      <div className="bg-white rounded-lg shadow-lg">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Issues</h2>
+        </div>
         <Table
           columns={columns}
           dataSource={filteredIssues}
@@ -714,13 +686,16 @@ export default function IssueTracking() {
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
+            className: "px-6 py-4",
           }}
+          className="[&_.ant-table-thead>tr>th]:bg-gray-50 [&_.ant-table-thead>tr>th]:font-semibold [&_.ant-table-thead>tr>th]:text-gray-700 [&_.ant-table-tbody>tr:hover>td]:bg-gray-50"
         />
-      </Card>
+      </div>
 
-      {/* Create/Edit Issue Modal */}
       <Modal
-        title={editingIssue ? "Edit Issue" : "Create New Issue"}
+        title={
+          <div className="text-xl font-semibold text-gray-900">{editingIssue ? "Edit Issue" : "Create New Issue"}</div>
+        }
         open={isModalVisible}
         onOk={handleModalOk}
         onCancel={() => {
@@ -728,24 +703,33 @@ export default function IssueTracking() {
           form.resetFields()
         }}
         width={800}
+        className="[&_.ant-modal-content]:rounded-lg"
       >
-        <Form form={form} layout="vertical" className="mt-4">
-          <Form.Item name="title" label="Issue Title" rules={[{ required: true, message: "Please enter issue title" }]}>
-            <Input placeholder="Enter issue title" />
+        <Form form={form} layout="vertical" className="mt-6">
+          <Form.Item
+            name="title"
+            label={<span className="text-gray-700 font-medium">Issue Title</span>}
+            rules={[{ required: true, message: "Please enter issue title" }]}
+          >
+            <Input placeholder="Enter a clear, descriptive title" className="h-10 rounded-md" />
           </Form.Item>
 
           <Form.Item
             name="description"
-            label="Description"
+            label={<span className="text-gray-700 font-medium">Description</span>}
             rules={[{ required: true, message: "Please enter issue description" }]}
           >
-            <TextArea rows={4} placeholder="Enter detailed description" />
+            <TextArea rows={4} placeholder="Provide detailed information about the issue" className="rounded-md" />
           </Form.Item>
 
           <Row gutter={16}>
             <Col span={8}>
-              <Form.Item name="type" label="Type" rules={[{ required: true, message: "Please select type" }]}>
-                <Select placeholder="Select type">
+              <Form.Item
+                name="type"
+                label={<span className="text-gray-700 font-medium">Type</span>}
+                rules={[{ required: true, message: "Please select type" }]}
+              >
+                <Select placeholder="Select type" className="h-10">
                   <Option value="bug">Bug</Option>
                   <Option value="feature">Feature Request</Option>
                   <Option value="improvement">Improvement</Option>
@@ -756,10 +740,10 @@ export default function IssueTracking() {
             <Col span={8}>
               <Form.Item
                 name="priority"
-                label="Priority"
+                label={<span className="text-gray-700 font-medium">Priority</span>}
                 rules={[{ required: true, message: "Please select priority" }]}
               >
-                <Select placeholder="Select priority">
+                <Select placeholder="Select priority" className="h-10">
                   <Option value="low">Low</Option>
                   <Option value="medium">Medium</Option>
                   <Option value="high">High</Option>
@@ -770,10 +754,10 @@ export default function IssueTracking() {
             <Col span={8}>
               <Form.Item
                 name="severity"
-                label="Severity"
+                label={<span className="text-gray-700 font-medium">Severity</span>}
                 rules={[{ required: true, message: "Please select severity" }]}
               >
-                <Select placeholder="Select severity">
+                <Select placeholder="Select severity" className="h-10">
                   <Option value="minor">Minor</Option>
                   <Option value="major">Major</Option>
                   <Option value="critical">Critical</Option>
@@ -785,8 +769,12 @@ export default function IssueTracking() {
 
           <Row gutter={16}>
             <Col span={8}>
-              <Form.Item name="status" label="Status" rules={[{ required: true, message: "Please select status" }]}>
-                <Select placeholder="Select status">
+              <Form.Item
+                name="status"
+                label={<span className="text-gray-700 font-medium">Status</span>}
+                rules={[{ required: true, message: "Please select status" }]}
+              >
+                <Select placeholder="Select status" className="h-10">
                   <Option value="open">Open</Option>
                   <Option value="in-progress">In Progress</Option>
                   <Option value="resolved">Resolved</Option>
@@ -797,10 +785,10 @@ export default function IssueTracking() {
             <Col span={8}>
               <Form.Item
                 name="assignee"
-                label="Assignee"
+                label={<span className="text-gray-700 font-medium">Assignee</span>}
                 rules={[{ required: true, message: "Please select assignee" }]}
               >
-                <Select placeholder="Select assignee">
+                <Select placeholder="Select assignee" className="h-10">
                   {teamMembers.map((member) => (
                     <Option key={member} value={member}>
                       {member}
@@ -812,10 +800,10 @@ export default function IssueTracking() {
             <Col span={8}>
               <Form.Item
                 name="reporter"
-                label="Reporter"
+                label={<span className="text-gray-700 font-medium">Reporter</span>}
                 rules={[{ required: true, message: "Please select reporter" }]}
               >
-                <Select placeholder="Select reporter">
+                <Select placeholder="Select reporter" className="h-10">
                   {teamMembers.map((member) => (
                     <Option key={member} value={member}>
                       {member}
@@ -828,8 +816,12 @@ export default function IssueTracking() {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="project" label="Project" rules={[{ required: true, message: "Please select project" }]}>
-                <Select placeholder="Select project">
+              <Form.Item
+                name="project"
+                label={<span className="text-gray-700 font-medium">Project</span>}
+                rules={[{ required: true, message: "Please select project" }]}
+              >
+                <Select placeholder="Select project" className="h-10">
                   {projects.map((project) => (
                     <Option key={project} value={project}>
                       {project}
@@ -839,8 +831,8 @@ export default function IssueTracking() {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item name="tags" label="Tags">
-                <Select mode="tags" placeholder="Add tags">
+              <Form.Item name="tags" label={<span className="text-gray-700 font-medium">Tags</span>}>
+                <Select mode="tags" placeholder="Add relevant tags" className="min-h-[40px]">
                   <Option value="ui">UI</Option>
                   <Option value="backend">Backend</Option>
                   <Option value="mobile">Mobile</Option>
@@ -852,28 +844,43 @@ export default function IssueTracking() {
           </Row>
 
           {form.getFieldValue("type") === "bug" && (
-            <>
-              <Form.Item name="stepsToReproduce" label="Steps to Reproduce">
-                <TextArea rows={3} placeholder="1. Step one&#10;2. Step two&#10;3. Step three" />
+            <div className="bg-gray-50 rounded-lg p-4 mt-4">
+              <h4 className="text-gray-800 font-medium mb-4">Bug Details</h4>
+
+              <Form.Item
+                name="stepsToReproduce"
+                label={<span className="text-gray-700 font-medium">Steps to Reproduce</span>}
+              >
+                <TextArea
+                  rows={3}
+                  placeholder="1. Navigate to...&#10;2. Click on...&#10;3. Observe..."
+                  className="rounded-md"
+                />
               </Form.Item>
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item name="expectedBehavior" label="Expected Behavior">
-                    <TextArea rows={2} placeholder="What should happen?" />
+                  <Form.Item
+                    name="expectedBehavior"
+                    label={<span className="text-gray-700 font-medium">Expected Behavior</span>}
+                  >
+                    <TextArea rows={2} placeholder="What should happen?" className="rounded-md" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item name="actualBehavior" label="Actual Behavior">
-                    <TextArea rows={2} placeholder="What actually happens?" />
+                  <Form.Item
+                    name="actualBehavior"
+                    label={<span className="text-gray-700 font-medium">Actual Behavior</span>}
+                  >
+                    <TextArea rows={2} placeholder="What actually happens?" className="rounded-md" />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Form.Item name="environment" label="Environment">
-                <Input placeholder="Browser, OS, device, etc." />
+              <Form.Item name="environment" label={<span className="text-gray-700 font-medium">Environment</span>}>
+                <Input placeholder="Browser, OS, device, version, etc." className="h-10 rounded-md" />
               </Form.Item>
-            </>
+            </div>
           )}
         </Form>
       </Modal>
