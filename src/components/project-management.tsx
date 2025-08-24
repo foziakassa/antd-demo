@@ -167,7 +167,7 @@ export default function ProjectManagement() {
   const renderProjectCard = (project: Project) => (
     <div
       key={project.id}
-      className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+      className="bg-white rounded-lg p-6  hover:shadow-lg transition-shadow duration-300 border border-gray-100"
     >
       <div className="flex items-start justify-between mb-5">
         <div className="flex-1 pr-4">
@@ -212,7 +212,7 @@ export default function ProjectManagement() {
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Due: {formatDate(project.endDate)}</span>
           </div>
-          <span className="font-bold text-gray-900 bg-green-50 text-green-800 px-3 py-1 rounded-lg">
+          <span className="font-bold  bg-green-50 text-green-800 px-3 py-1 rounded-lg">
             ${project.budget.toLocaleString()}
           </span>
         </div>
@@ -365,7 +365,8 @@ export default function ProjectManagement() {
                 type="text"
                 value={formData.name || ""}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 font-medium"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl 
+                 transition-all duration-200 text-gray-900 placeholder-gray-400 font-medium"
                 placeholder="Enter a descriptive project name"
               />
             </div>
@@ -415,11 +416,11 @@ export default function ProjectManagement() {
                 <option value="" className="text-gray-400">
                   Select status
                 </option>
-                <option value="planning">📋 Planning</option>
-                <option value="in-progress">🚀 In Progress</option>
-                <option value="review">👀 Review</option>
-                <option value="completed">✅ Completed</option>
-                <option value="on-hold">⏸️ On Hold</option>
+                <option value="planning">Planning</option>
+                <option value="in-progress">In Progress</option>
+                <option value="review">Review</option>
+                <option value="completed">Completed</option>
+                <option value="on-hold">On Hold</option>
               </select>
             </div>
             <div className="space-y-2">
@@ -434,10 +435,10 @@ export default function ProjectManagement() {
                 <option value="" className="text-gray-400">
                   Select priority
                 </option>
-                <option value="low">🟢 Low Priority</option>
-                <option value="medium">🟡 Medium Priority</option>
-                <option value="high">🟠 High Priority</option>
-                <option value="critical">🔴 Critical Priority</option>
+                <option value="low"> Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+                <option value="critical">Critical Priority</option>
               </select>
             </div>
             <div className="space-y-2">
@@ -496,20 +497,7 @@ export default function ProjectManagement() {
             />
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
-                <span className="text-white text-xs font-bold">i</span>
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-blue-900 mb-1">Form Guidelines</h4>
-                <p className="text-sm text-blue-700">
-                  Fields marked with <span className="text-red-500 font-bold">*</span> are required. Make sure to
-                  provide accurate information for better project tracking and management.
-                </p>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </Modal>
 
