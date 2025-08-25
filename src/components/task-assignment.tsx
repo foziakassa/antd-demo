@@ -16,7 +16,6 @@ import {
   Col,
   Typography,
   Tabs,
-  List,
   Progress,
   Dropdown,
   message,
@@ -459,98 +458,198 @@ export default function TaskAssignment() {
 
     return (
       <Modal
-        title={selectedTask.title}
+        title={
+          <div className="pb-4 border-b border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-1">{selectedTask.title}</h2>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-600">Project:</span>
+              <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                {selectedTask.project}
+              </span>
+            </div>
+          </div>
+        }
         open={!!selectedTask}
         onCancel={() => setSelectedTask(null)}
         footer={[
-          <Button key="close" onClick={() => setSelectedTask(null)}>
+          <Button key="close" onClick={() => setSelectedTask(null)} className="h-10 px-6 font-medium">
             Close
           </Button>,
-          <Button key="edit" type="primary" onClick={() => handleEditTask(selectedTask)}>
+          <Button
+            key="edit"
+            type="primary"
+            onClick={() => handleEditTask(selectedTask)}
+            className="h-10 px-6 font-medium bg-blue-600 hover:bg-blue-700"
+          >
             Edit Task
           </Button>,
         ]}
-        width={800}
+        width={900}
+        className="task-detail-modal"
       >
-        <div className="space-y-4">
-          <div>
-            <Title level={5}>Description</Title>
-            <Paragraph>{selectedTask.description}</Paragraph>
+        <div className="space-y-8 pt-4">
+          <div className="bg-gray-50 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
+              Description
+            </h3>
+            <p className="text-gray-700 leading-relaxed text-base">{selectedTask.description}</p>
           </div>
 
-          <Row gutter={[16, 8]}>
-            <Col span={12}>
-              <Text strong>Status: </Text>
-              <Tag icon={getStatusIcon(selectedTask.status)} color={getStatusColor(selectedTask.status)}>
-                {selectedTask.status.replace("-", " ").toUpperCase()}
-              </Tag>
-            </Col>
-            <Col span={12}>
-              <Text strong>Priority: </Text>
-              <Tag icon={<FlagOutlined />} color={getPriorityColor(selectedTask.priority)}>
-                {selectedTask.priority.toUpperCase()}
-              </Tag>
-            </Col>
-            <Col span={12}>
-              <Text strong>Assignee: </Text>
-              <Text>{selectedTask.assignee}</Text>
-            </Col>
-            <Col span={12}>
-              <Text strong>Reporter: </Text>
-              <Text>{selectedTask.reporter}</Text>
-            </Col>
-            <Col span={12}>
-              <Text strong>Project: </Text>
-              <Text>{selectedTask.project}</Text>
-            </Col>
-            <Col span={12}>
-              <Text strong>Due Date: </Text>
-              <Text>{dayjs(selectedTask.dueDate).format("MMM DD, YYYY")}</Text>
-            </Col>
-            <Col span={12}>
-              <Text strong>Estimated Hours: </Text>
-              <Text>{selectedTask.estimatedHours}h</Text>
-            </Col>
-            <Col span={12}>
-              <Text strong>Actual Hours: </Text>
-              <Text>{selectedTask.actualHours || 0}h</Text>
-            </Col>
-          </Row>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-5">
+              <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Status & Priority</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">Status</span>
+                  <Tag
+                    icon={getStatusIcon(selectedTask.status)}
+                    color={getStatusColor(selectedTask.status)}
+                    className="font-semibold px-3 py-1"
+                  >
+                    {selectedTask.status.replace("-", " ").toUpperCase()}
+                  </Tag>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">Priority</span>
+                  <Tag
+                    icon={<FlagOutlined />}
+                    color={getPriorityColor(selectedTask.priority)}
+                    className="font-semibold px-3 py-1"
+                  >
+                    {selectedTask.priority.toUpperCase()}
+                  </Tag>
+                </div>
+              </div>
+            </div>
 
-          <div>
-            <Title level={5}>Tags</Title>
-            <div className="flex gap-1">
-              {selectedTask.tags.map((tag) => (
-                <Tag key={tag}>{tag}</Tag>
-              ))}
+            <div className="bg-white border border-gray-200 rounded-lg p-5">
+              <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Team & Timeline</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">Assignee</span>
+                  <div className="flex items-center gap-2">
+                    <Avatar size="small" icon={<UserOutlined />} className="border border-gray-300" />
+                    <span className="text-sm font-semibold text-gray-900">{selectedTask.assignee}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-600">Reporter</span>
+                  <span className="text-sm font-semibold text-gray-900">{selectedTask.reporter}</span>
+                </div>
+              </div>
             </div>
           </div>
 
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <CalendarOutlined className="text-blue-500" />
+              Timeline & Progress
+            </h4>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Created Date</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {dayjs(selectedTask.createdDate).format("MMM DD, YYYY")}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Due Date</span>
+                  <span
+                    className={`text-sm font-semibold ${dayjs(selectedTask.dueDate).isBefore(dayjs()) && selectedTask.status !== "completed" ? "text-red-600" : "text-gray-900"}`}
+                  >
+                    {dayjs(selectedTask.dueDate).format("MMM DD, YYYY")}
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Estimated Hours</span>
+                  <span className="text-sm font-semibold text-gray-900">{selectedTask.estimatedHours}h</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Actual Hours</span>
+                  <span className="text-sm font-semibold text-gray-900">{selectedTask.actualHours || 0}h</span>
+                </div>
+              </div>
+            </div>
+            {selectedTask.actualHours && selectedTask.estimatedHours && (
+              <div className="mt-6 pt-4 border-t border-gray-100">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-gray-600">Progress</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {Math.round((selectedTask.actualHours / selectedTask.estimatedHours) * 100)}%
+                  </span>
+                </div>
+                <Progress
+                  percent={Math.min((selectedTask.actualHours / selectedTask.estimatedHours) * 100, 100)}
+                  strokeColor="#3b82f6"
+                  className="mb-2"
+                />
+              </div>
+            )}
+          </div>
+
+          {selectedTask.tags.length > 0 && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">Tags</h4>
+              <div className="flex flex-wrap gap-2">
+                {selectedTask.tags.map((tag) => (
+                  <Tag
+                    key={tag}
+                    className="px-3 py-1 text-sm font-medium bg-blue-50 text-blue-700 border-blue-200 rounded-full"
+                  >
+                    {tag}
+                  </Tag>
+                ))}
+              </div>
+            </div>
+          )}
+
           {selectedTask.comments.length > 0 && (
-            <div>
-              <Title level={5}>Comments</Title>
-              <List
-                dataSource={selectedTask.comments}
-                renderItem={(comment) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={<Avatar size="small" icon={<UserOutlined />} />}
-                      title={comment.author}
-                      description={
-                        <div>
-                          <div>{comment.content}</div>
-                          <div className="text-xs text-muted mt-1">
-                            {dayjs(comment.timestamp).format("MMM DD, YYYY HH:mm")}
-                          </div>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 flex items-center gap-2">
+                <span className="w-1 h-6 bg-green-500 rounded-full"></span>
+                Comments ({selectedTask.comments.length})
+              </h4>
+              <div className="space-y-4">
+                {selectedTask.comments.map((comment) => (
+                  <div key={comment.id} className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+                    <div className="flex items-start gap-3">
+                      <Avatar size="small" icon={<UserOutlined />} className="mt-1 border border-gray-300" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-semibold text-gray-900">{comment.author}</span>
+                          <span className="text-xs text-gray-500 font-medium">
+                            {dayjs(comment.timestamp).format("MMM DD, YYYY • HH:mm")}
+                          </span>
                         </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
+                        <p className="text-sm text-gray-700 leading-relaxed">{comment.content}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
+
+        <style jsx global>{`
+          .task-detail-modal .ant-modal-content {
+            border-radius: 12px;
+            overflow: hidden;
+          }
+          .task-detail-modal .ant-modal-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e2e8f0;
+          }
+          .task-detail-modal .ant-modal-body {
+            padding: 0 24px 24px 24px;
+            max-height: 70vh;
+            overflow-y: auto;
+          }
+        `}</style>
       </Modal>
     )
   }
@@ -627,7 +726,7 @@ export default function TaskAssignment() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-6  mb-6">
+      <div className="bg-white rounded-lg p-6 shadow-lg mb-6">
         <div className="flex flex-wrap items-center gap-4">
           <span className="text-sm font-medium text-gray-700">Filters:</span>
           <Select placeholder="All Statuses" value={filterStatus} onChange={setFilterStatus} style={{ width: 150 }}>
@@ -662,9 +761,170 @@ export default function TaskAssignment() {
         </div>
       </div>
 
+      {/* Create/Edit Task Modal */}
+      <Modal
+        title={
+          <div className="pb-4 border-b border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900">{editingTask ? "Edit Task" : "Create New Task"}</h3>
+            <p className="text-sm text-gray-600 mt-1">
+              {editingTask ? "Update task details and assignments" : "Add a new task to your project"}
+            </p>
+          </div>
+        }
+        open={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={() => {
+          setIsModalVisible(false)
+          form.resetFields()
+        }}
+        width={700}
+        okText={editingTask ? "Update Task" : "Create Task"}
+        okButtonProps={{
+          className: "bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700 h-10 px-6 font-medium",
+        }}
+        cancelButtonProps={{
+          className: "h-10 px-6 font-medium border-gray-300 text-gray-700 hover:border-gray-400",
+        }}
+      >
+        <Form form={form} layout="vertical" className="mt-6">
+          <Form.Item
+            name="title"
+            label={<span className="text-sm font-medium text-gray-700">Task Title</span>}
+            rules={[{ required: true, message: "Please enter task title" }]}
+          >
+            <Input
+              placeholder="Enter task title"
+              className="h-10 border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label={<span className="text-sm font-medium text-gray-700">Description</span>}
+            rules={[{ required: true, message: "Please enter task description" }]}
+          >
+            <TextArea
+              rows={3}
+              placeholder="Enter task description"
+              className="border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+          </Form.Item>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              name="status"
+              label={<span className="text-sm font-medium text-gray-700">Status</span>}
+              rules={[{ required: true, message: "Please select status" }]}
+            >
+              <Select placeholder="Select status" className="h-10">
+                <Option value="todo">To Do</Option>
+                <Option value="in-progress">In Progress</Option>
+                <Option value="review">Review</Option>
+                <Option value="completed">Completed</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="priority"
+              label={<span className="text-sm font-medium text-gray-700">Priority</span>}
+              rules={[{ required: true, message: "Please select priority" }]}
+            >
+              <Select placeholder="Select priority" className="h-10">
+                <Option value="low">Low</Option>
+                <Option value="medium">Medium</Option>
+                <Option value="high">High</Option>
+                <Option value="critical">Critical</Option>
+              </Select>
+            </Form.Item>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              name="assignee"
+              label={<span className="text-sm font-medium text-gray-700">Assignee</span>}
+              rules={[{ required: true, message: "Please select assignee" }]}
+            >
+              <Select placeholder="Select assignee" className="h-10">
+                {teamMembers.map((member) => (
+                  <Option key={member} value={member}>
+                    {member}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="dueDate"
+              label={<span className="text-sm font-medium text-gray-700">Due Date</span>}
+              rules={[{ required: true, message: "Please select due date" }]}
+            >
+              <DatePicker className="w-full h-10 border-gray-300 focus:border-blue-500" placeholder="Select due date" />
+            </Form.Item>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              name="project"
+              label={<span className="text-sm font-medium text-gray-700">Project</span>}
+              rules={[{ required: true, message: "Please select project" }]}
+            >
+              <Select placeholder="Select project" className="h-10">
+                {projects.map((project) => (
+                  <Option key={project} value={project}>
+                    {project}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="estimatedHours"
+              label={<span className="text-sm font-medium text-gray-700">Estimated Hours</span>}
+              rules={[{ required: true, message: "Please enter estimated hours" }]}
+            >
+              <Input
+                type="number"
+                placeholder="0"
+                className="h-10 border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item name="tags" label={<span className="text-sm font-medium text-gray-700">Tags</span>}>
+            <Select mode="tags" placeholder="Add tags" className="min-h-10">
+              <Option value="frontend">Frontend</Option>
+              <Option value="backend">Backend</Option>
+              <Option value="design">Design</Option>
+              <Option value="testing">Testing</Option>
+              <Option value="urgent">Urgent</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       {/* Task Content */}
       {viewMode === "list" ? (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+          <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Task Management</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Showing {filteredTasks.length} of {tasks.length} tasks
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-500">Total Progress:</span>
+                <Progress
+                  percent={Math.round((tasks.filter((t) => t.status === "completed").length / tasks.length) * 100)}
+                  size="small"
+                  strokeColor="#10b981"
+                  className="w-24"
+                />
+              </div>
+            </div>
+          </div>
+
           <Table
             columns={columns}
             dataSource={filteredTasks}
@@ -673,164 +933,46 @@ export default function TaskAssignment() {
               pageSize: 10,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => (
-                <span className="text-sm font-medium text-gray-600">
-                  Showing {range[0]}-{range[1]} of {total} tasks
-                </span>
-              ),
+              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} tasks`,
             }}
-            className="task-table"
-            rowClassName="hover:bg-gray-50 transition-colors"
+            className="professional-table"
+            size="middle"
           />
+
           <style jsx global>{`
-            .task-table .ant-table-thead > tr > th {
-              background-color: #f8fafc;
-              border-bottom: 2px solid #e2e8f0;
+            .professional-table .ant-table {
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+              overflow: hidden;
+            }
+            .professional-table .ant-table-thead > tr > th {
+              background-color: #f9fafb;
+              border-bottom: 1px solid #e5e7eb;
               font-weight: 600;
-              font-size: 14px;
+              font-size: 13px;
               color: #374151;
-              padding: 16px 12px;
+              padding: 16px;
             }
-            .task-table .ant-table-tbody > tr > td {
-              padding: 16px 12px;
-              border-bottom: 1px solid #f1f5f9;
+            .professional-table .ant-table-tbody > tr > td {
+              padding: 16px;
+              border-bottom: 1px solid #f3f4f6;
             }
-            .task-table .ant-table-tbody > tr:hover > td {
-              background-color: #f8fafc;
+            .professional-table .ant-table-tbody > tr:hover > td {
+              background-color: #f9fafb;
+            }
+            .professional-table .ant-table-tbody > tr:last-child > td {
+              border-bottom: none;
+            }
+            .professional-table .ant-pagination {
+              padding: 16px;
+              border-top: 1px solid #e5e7eb;
+              background-color: #f9fafb;
             }
           `}</style>
         </div>
       ) : (
         renderKanbanBoard()
       )}
-
-      {/* Create/Edit Task Modal */}
-      <Modal
-        title={editingTask ? "Edit Task" : "Create New Task"}
-        open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={() => {
-          setIsModalVisible(false)
-          form.resetFields()
-        }}
-        width={700}
-      >
-        <Form form={form} layout="vertical" className="mt-4">
-          <Form.Item name="title" label="Task Title" rules={[{ required: true, message: "Please enter task title" }]}>
-            <Input placeholder="Enter task title" />
-          </Form.Item>
-
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: "Please enter task description" }]}
-          >
-            <TextArea rows={3} placeholder="Enter task description" />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item name="status" label="Status" rules={[{ required: true, message: "Please select status" }]}>
-                <Select placeholder="Select status">
-                  <Option value="todo">To Do</Option>
-                  <Option value="in-progress">In Progress</Option>
-                  <Option value="review">Review</Option>
-                  <Option value="completed">Completed</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name="priority"
-                label="Priority"
-                rules={[{ required: true, message: "Please select priority" }]}
-              >
-                <Select placeholder="Select priority">
-                  <Option value="low">Low</Option>
-                  <Option value="medium">Medium</Option>
-                  <Option value="high">High</Option>
-                  <Option value="critical">Critical</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name="estimatedHours"
-                label="Estimated Hours"
-                rules={[{ required: true, message: "Please enter estimated hours" }]}
-              >
-                <Input type="number" placeholder="Hours" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="assignee"
-                label="Assignee"
-                rules={[{ required: true, message: "Please select assignee" }]}
-              >
-                <Select placeholder="Select assignee">
-                  {teamMembers.map((member) => (
-                    <Option key={member} value={member}>
-                      {member}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="reporter"
-                label="Reporter"
-                rules={[{ required: true, message: "Please select reporter" }]}
-              >
-                <Select placeholder="Select reporter">
-                  {teamMembers.map((member) => (
-                    <Option key={member} value={member}>
-                      {member}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="project" label="Project" rules={[{ required: true, message: "Please select project" }]}>
-                <Select placeholder="Select project">
-                  {projects.map((project) => (
-                    <Option key={project} value={project}>
-                      {project}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="dueDate"
-                label="Due Date"
-                rules={[{ required: true, message: "Please select due date" }]}
-              >
-                <DatePicker className="w-full" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item name="tags" label="Tags">
-            <Select mode="tags" placeholder="Add tags">
-              <Option value="frontend">Frontend</Option>
-              <Option value="backend">Backend</Option>
-              <Option value="design">Design</Option>
-              <Option value="testing">Testing</Option>
-              <Option value="documentation">Documentation</Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
 
       {renderTaskDetails()}
     </div>

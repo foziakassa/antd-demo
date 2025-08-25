@@ -522,7 +522,7 @@ export default function ProgressMonitoring() {
     if (criticalDeadlines.length === 0) return null
 
     return (
-      <div className="bg-white rounded-lg p-6 shadow-lg mb-6">
+      <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
         <div className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
           <WarningOutlined className="text-orange-500" />
           Deadline Alerts
@@ -594,7 +594,7 @@ export default function ProgressMonitoring() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-end mb-6">
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <Select value={selectedTimeRange} onChange={setSelectedTimeRange} style={{ width: 120 }}>
             <Option value="week">This Week</Option>
             <Option value="month">This Month</Option>
@@ -608,7 +608,7 @@ export default function ProgressMonitoring() {
               </Option>
             ))}
           </Select>
-        </div>
+        </div> */}
       </div>
 
       {renderOverviewCards()}
@@ -685,7 +685,7 @@ export default function ProgressMonitoring() {
                   Upcoming Deadlines
                 </div>
                 <div className="space-y-3">
-                  {progressData.deadlines
+                  {progressData.deadlines 
                     .filter((d) => d.status === "upcoming")
                     .sort((a, b) => a.daysRemaining - b.daysRemaining)
                     .slice(0, 5)
